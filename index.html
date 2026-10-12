@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bench Ivan Canzana | Aspiring AI Engineer</title>
+  <meta name="description" content="Portfolio of Bench Ivan Canzana, an aspiring AI Engineer building intelligent, data-driven solutions.">
+
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="alternate icon" href="./assets/favicon.svg">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bench Ivan Canzana | Aspiring AI Engineer">
+  <meta property="og:description" content="Portfolio of Bench Ivan Canzana, an aspiring AI Engineer building intelligent, data-driven solutions.">
+  <meta property="og:url" content="https://Bread03566.github.io/Personal-Portfolio/">
+  <meta property="og:image" content="https://Bread03566.github.io/Personal-Portfolio/assets/Profile%20picture.jpg">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bench Ivan Canzana | Aspiring AI Engineer">
+  <meta name="twitter:description" content="Portfolio of Bench Ivan Canzana, an aspiring AI Engineer building intelligent, data-driven solutions.">
+  <meta name="twitter:image" content="https://Bread03566.github.io/Personal-Portfolio/assets/Profile%20picture.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="layout">
+
+    <header class="topbar">
+      <button type="button" id="nav-toggle" class="hamburger" aria-expanded="false" aria-controls="sidebar" aria-label="Toggle navigation menu">
+        <span class="hamburger__bar" aria-hidden="true"></span>
+        <span class="hamburger__bar" aria-hidden="true"></span>
+        <span class="hamburger__bar" aria-hidden="true"></span>
+      </button>
+      <a href="#home" class="topbar__brand">Bench Ivan Canzana</a>
+      <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to light mode">
+        <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+
+    <aside id="sidebar" class="sidebar" aria-label="Primary navigation">
+      <div class="sidebar__inner">
+        <a href="#home" class="sidebar__brand">Bench Ivan<br>Canzana</a>
+
+        <nav aria-label="Sections">
+          <ul class="sidebar__nav">
+            <li><a href="#home" class="sidebar__link" data-nav-link>Home</a></li>
+            <li><a href="#about" class="sidebar__link" data-nav-link>01 &mdash; About</a></li>
+            <li><a href="#skills" class="sidebar__link" data-nav-link>02 &mdash; Skills</a></li>
+            <li><a href="#projects" class="sidebar__link" data-nav-link>03 &mdash; Projects</a></li>
+            <li><a href="#contact" class="sidebar__link" data-nav-link>04 &mdash; Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="sidebar__footer">
+          <a class="sidebar__social-link" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer">github &#8599;</a>
+          <a class="sidebar__social-link" href="mailto:benchcanzana@gmail.com">email &#8599;</a>
+
+          <button type="button" id="theme-toggle-desktop" class="theme-toggle-desktop" aria-pressed="false" aria-label="Switch to light mode">
+            <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="theme-toggle-label">Dark mode</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <main id="main-content" class="content">
+
+      <section id="home" class="hero reveal" aria-label="Introduction">
+        <p class="hero__eyebrow">Hello, I'm</p>
+        <h1 class="hero__name">Bench Ivan Canzana</h1>
+        <p class="hero__role">Aspiring AI Engineer</p>
+        <p class="hero__tagline">Building intelligent solutions, one project at a time.</p>
+        <div class="hero__actions">
+          <a href="#contact" class="btn btn--primary">Get In Touch</a>
+          <a href="#projects" class="btn btn--secondary">View Projects</a>
+        </div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">01</span> &mdash; about</p>
+        </div>
+        <hr class="rule">
+
+        <div class="about__content">
+          <img
+            class="about__photo"
+            src="./assets/Profile picture.jpg"
+            alt="Portrait photo of Bench Ivan Canzana"
+            width="200"
+            height="200"
+            loading="lazy"
+          >
+          <div class="about__text">
+            <p>
+              I'm a graduating student and aspiring AI Engineer who loves turning ideas into
+              practical, intelligent applications. I enjoy working with machine learning, data,
+              and modern AI tools to solve real problems.
+            </p>
+            <p>
+              I'm eager to join a team where I can learn, contribute, and grow from day one.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">02</span> &mdash; skills</p>
+        </div>
+        <hr class="rule">
+
+        <div class="skills__groups stagger">
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Languages</h3>
+            <ul class="skill-group__tags">
+              <li>Python</li>
+              <li>SQL</li>
+              <li>HTML/CSS</li>
+              <li>JavaScript (basic)</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">AI / Machine Learning</h3>
+            <ul class="skill-group__tags">
+              <li>Machine Learning Basics</li>
+              <li>Data Analysis</li>
+              <li>NLP (basics)</li>
+              <li>Prompt Engineering</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Libraries &amp; Frameworks</h3>
+            <ul class="skill-group__tags">
+              <li>Pandas</li>
+              <li>NumPy</li>
+              <li>scikit-learn</li>
+              <li>Matplotlib</li>
+              <li>TensorFlow (learning)</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Tools</h3>
+            <ul class="skill-group__tags">
+              <li>Git / GitHub</li>
+              <li>Jupyter Notebook</li>
+              <li>Google Colab</li>
+              <li>VS Code</li>
+              <li>REST APIs</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Concepts</h3>
+            <ul class="skill-group__tags">
+              <li>Data Cleaning</li>
+              <li>Data Visualization</li>
+              <li>Model Training &amp; Evaluation (basics)</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="projects" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">03</span> &mdash; projects</p>
+        </div>
+        <hr class="rule">
+
+        <div class="projects__grid stagger">
+          <article class="project-card reveal-item">
+            <span class="project-card__badge">In Progress</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">Project Coming Soon</h3>
+            <p class="project-card__desc">Project details coming soon. Check back for updates as this build progresses.</p>
+          </article>
+
+          <article class="project-card reveal-item">
+            <span class="project-card__badge">In Progress</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">Project Coming Soon</h3>
+            <p class="project-card__desc">Project details coming soon. Check back for updates as this build progresses.</p>
+          </article>
+
+          <article class="project-card reveal-item">
+            <span class="project-card__badge">In Progress</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">Project Coming Soon</h3>
+            <p class="project-card__desc">Project details coming soon. Check back for updates as this build progresses.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">04</span> &mdash; contact</p>
+        </div>
+        <hr class="rule">
+
+        <div class="contact__content">
+          <div class="contact__cards stagger">
+            <a class="contact-card reveal-item" href="mailto:benchcanzana@gmail.com" aria-label="Send an email to benchcanzana@gmail.com">
+              <div class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="contact-card__label">Email</span>
+              <span class="contact-card__value">benchcanzana@gmail.com</span>
+            </a>
+
+            <a class="contact-card reveal-item" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Visit Bench Ivan Canzana's GitHub profile (opens in a new tab)">
+              <div class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="contact-card__label">GitHub</span>
+              <span class="contact-card__value">github.com/Bread03566</span>
+            </a>
+          </div>
+
+          <form class="contact-form reveal-item" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form">
+            <div class="form-field">
+              <label for="contact-name">Name</label>
+              <input type="text" id="contact-name" name="name" autocomplete="name" placeholder="Your name" required>
+            </div>
+            <div class="form-field">
+              <label for="contact-email">Email</label>
+              <input type="email" id="contact-email" name="email" autocomplete="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-field">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" name="message" rows="5" placeholder="What would you like to talk about?" required></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary btn--block">Send Message</button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__content">
+        <p class="site-footer__copyright">&copy; <span id="current-year">2026</span> Bench Ivan Canzana. All rights reserved.</p>
+
+        <ul class="site-footer__links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="site-footer__social">
+          <a href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Bench Ivan Canzana on GitHub (opens in a new tab)">
+            <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
