@@ -228,12 +228,12 @@ const initScrollEffects = () => {
 };
 
 /**
- * Cursor-follow spotlight on project cards (fine pointers only).
+ * Cursor-follow spotlight on project and contact cards (fine pointers only).
  */
 const initCardSpotlight = () => {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-  document.querySelectorAll('.project-card').forEach((card) => {
+  document.querySelectorAll('.project-card, .contact-card').forEach((card) => {
     card.addEventListener('pointermove', (event) => {
       const rect = card.getBoundingClientRect();
       card.style.setProperty('--mx', `${event.clientX - rect.left}px`);

@@ -895,11 +895,14 @@ textarea {
   transform: scaleY(1);
 }
 
-.project-card {
+.project-card,
+.contact-card {
+  position: relative;
   overflow: hidden;
 }
 
-.project-card::before {
+.project-card::before,
+.contact-card::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -909,15 +912,18 @@ textarea {
   transition: opacity var(--transition-base);
 }
 
-.project-card:hover::before {
+.project-card:hover::before,
+.contact-card:hover::before {
   opacity: 1;
 }
 
-.project-card__icon {
+.project-card__icon,
+.contact-card__icon {
   transition: color var(--transition-base), transform var(--transition-base);
 }
 
-.project-card:hover .project-card__icon {
+.project-card:hover .project-card__icon,
+.contact-card:hover .contact-card__icon {
   color: var(--color-text);
   transform: scale(1.1) rotate(-4deg);
 }
