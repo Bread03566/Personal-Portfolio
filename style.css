@@ -500,7 +500,7 @@ textarea {
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--color-border);
-  filter: grayscale(1);
+  filter: grayscale(0);
 }
 
 .about__text {
@@ -872,7 +872,7 @@ textarea {
 }
 
 .about__photo:hover {
-  filter: grayscale(0);
+  filter: grayscale(1);
   transform: scale(1.04);
   border-color: var(--color-text);
 }
