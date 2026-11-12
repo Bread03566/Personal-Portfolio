@@ -1,305 +1,308 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bench Ivan Canzana | Aspiring Software Engineer</title>
-  <meta name="description" content="Portfolio of Bench Ivan Canzana, a graduating student and aspiring software engineer who builds web projects with Python and JavaScript.">
+  <meta name="description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
 
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
   <link rel="alternate icon" href="./assets/favicon.svg">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Bench Ivan Canzana | Aspiring Software Engineer">
-  <meta property="og:description" content="Portfolio of Bench Ivan Canzana, a graduating student and aspiring software engineer.">
+  <meta property="og:description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
   <meta property="og:url" content="https://Bread03566.github.io/Personal-Portfolio/">
   <meta property="og:image" content="https://Bread03566.github.io/Personal-Portfolio/assets/profile.jpg">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Bench Ivan Canzana | Aspiring Software Engineer">
-  <meta name="twitter:description" content="Portfolio of Bench Ivan Canzana, a graduating student and aspiring software engineer.">
+  <meta name="twitter:description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
   <meta name="twitter:image" content="https://Bread03566.github.io/Personal-Portfolio/assets/profile.jpg">
-
-  <script>
-    /* Apply the saved theme before first paint to avoid a flash. */
-    try {
-      if (localStorage.getItem('portfolio-theme') === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    } catch (e) { /* storage unavailable: keep the default theme */ }
-  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=3">
 </head>
 <body>
 
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <header class="site-header" id="site-header">
-    <div class="site-header__inner">
-      <a href="#home" class="site-header__brand">Bench Canzana</a>
+  <div class="layout">
 
-      <nav id="site-nav" class="site-nav" aria-label="Sections">
-        <ul class="site-nav__list">
-          <li><a href="#about" class="site-nav__link" data-nav-link>About</a></li>
-          <li><a href="#skills" class="site-nav__link" data-nav-link>Skills</a></li>
-          <li><a href="#projects" class="site-nav__link" data-nav-link>Projects</a></li>
-          <li><a href="#contact" class="site-nav__link" data-nav-link>Contact</a></li>
-        </ul>
-      </nav>
+    <header class="topbar">
+      <button type="button" id="nav-toggle" class="hamburger" aria-expanded="false" aria-controls="sidebar" aria-label="Toggle navigation menu">
+        <span class="hamburger__bar" aria-hidden="true"></span>
+        <span class="hamburger__bar" aria-hidden="true"></span>
+        <span class="hamburger__bar" aria-hidden="true"></span>
+      </button>
+      <a href="#home" class="topbar__brand">Bench Ivan Canzana</a>
+      <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to light mode">
+        <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
 
-      <div class="site-header__tools">
-        <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to dark mode">
-          <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button type="button" id="nav-toggle" class="icon-button nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation menu">
-          <span class="nav-toggle__bar" aria-hidden="true"></span>
-          <span class="nav-toggle__bar" aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
-  </header>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
 
-  <main id="main-content">
+    <aside id="sidebar" class="sidebar" aria-label="Primary navigation">
+      <div class="sidebar__inner">
+        <a href="#home" class="sidebar__brand">Bench Ivan<br>Canzana</a>
 
-    <section id="home" class="hero" aria-label="Introduction">
-      <div class="hero__inner">
-        <div class="hero__copy">
-          <p class="hero__status"><span class="hero__dot" aria-hidden="true"></span>Graduating soon and open to entry-level roles</p>
-          <h1 class="hero__name">Bench Ivan Canzana</h1>
-          <p class="hero__role">Aspiring software engineer</p>
-          <p class="hero__tagline">I build small, working programs and web pages, and I'm looking for a team where I can ship real code and learn from engineers who are better than me.</p>
-          <div class="hero__actions">
-            <a href="#projects" class="btn btn--primary">See my projects</a>
-            <a href="#contact" class="btn btn--secondary">Email me</a>
-          </div>
+        <nav aria-label="Sections">
+          <ul class="sidebar__nav">
+            <li><a href="#home" class="sidebar__link" data-nav-link>Home</a></li>
+            <li><a href="#about" class="sidebar__link" data-nav-link>01 &mdash; About</a></li>
+            <li><a href="#skills" class="sidebar__link" data-nav-link>02 &mdash; Skills</a></li>
+            <li><a href="#projects" class="sidebar__link" data-nav-link>03 &mdash; Projects</a></li>
+            <li><a href="#contact" class="sidebar__link" data-nav-link>04 &mdash; Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="sidebar__footer">
+          <a class="sidebar__social-link" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer">github &#8599;</a>
+          <a class="sidebar__social-link" href="mailto:benchcanzana@gmail.com">email &#8599;</a>
+
+          <button type="button" id="theme-toggle-desktop" class="theme-toggle-desktop" aria-pressed="false" aria-label="Switch to light mode">
+            <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="theme-toggle-label">Dark mode</span>
+          </button>
         </div>
+      </div>
+    </aside>
 
-        <figure class="hero__portrait">
+    <main id="main-content" class="content">
+
+      <section id="home" class="hero reveal" aria-label="Introduction">
+        <p class="hero__eyebrow">Hello, I'm</p>
+        <h1 class="hero__name">Bench Ivan Canzana</h1>
+        <p class="hero__role">Aspiring Software Engineer</p>
+        <p class="hero__tagline">Building working software, one project at a time.</p>
+        <div class="hero__actions">
+          <a href="#contact" class="btn btn--primary">Get In Touch</a>
+          <a href="#projects" class="btn btn--secondary">View Projects</a>
+        </div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">01</span> &mdash; about</p>
+        </div>
+        <hr class="rule">
+
+        <div class="about__content">
           <img
+            class="about__photo"
             src="./assets/profile.jpg"
-            alt="Bench Ivan Canzana in a dark suit and tie, smiling"
-            width="900"
-            height="900"
-            fetchpriority="high"
+            alt="Portrait photo of Bench Ivan Canzana"
+            width="200"
+            height="200"
+            loading="lazy"
           >
-        </figure>
-      </div>
-    </section>
-
-    <section id="about" class="section">
-      <div class="section__inner section__inner--split">
-        <h2 class="section__title">About</h2>
-        <div class="prose">
-          <p>I'm a graduating student training to become a software engineer. I like taking a problem, breaking it into small pieces, and getting each piece working before moving on.</p>
-          <p>My coding so far is in Python and JavaScript, and I started out with data and machine learning, which still shapes how I test and debug. Now I'm focused on building complete web projects and learning how professional teams write, review, and ship code.</p>
-          <p>I learn fast, ask questions early, and want to contribute from my first week.</p>
+          <div class="about__text">
+            <p>
+              I'm a graduating student and aspiring Software Engineer who loves turning ideas into
+              practical, working applications. I enjoy breaking problems into small pieces and
+              writing clean code in Python and JavaScript, with a background in data and machine learning.
+            </p>
+            <p>
+              I'm eager to join a team where I can learn, contribute, and ship real code from day one.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="skills" class="section section--tint">
-      <div class="section__inner section__inner--split">
-        <h2 class="section__title">Skills</h2>
-        <dl class="skills">
-          <div class="skills__row">
-            <dt>Languages</dt>
-            <dd>
-              <ul class="chips">
-                <li>Python</li>
-                <li>JavaScript</li>
-                <li>PHP</li>
-                <li>SQL</li>
-                <li>HTML</li>
-                <li>CSS</li>
-              </ul>
-            </dd>
-          </div>
-          <div class="skills__row">
-            <dt>Frontend</dt>
-            <dd>
-              <ul class="chips">
-                <li>React</li>
-                <li>Vite</li>
-                <li>Tailwind CSS</li>
-                <li>React Router</li>
-                <li>Framer Motion</li>
-                <li>Vitest</li>
-                <li>ESLint</li>
-              </ul>
-            </dd>
-          </div>
-          <div class="skills__row">
-            <dt>Backend</dt>
-            <dd>
-              <ul class="chips">
-                <li>Laravel</li>
-                <li>MySQL</li>
-                <li>REST APIs</li>
-                <li>Session auth and CSRF</li>
-                <li>PHPUnit</li>
-                <li>Docker</li>
-                <li>Cloudflare R2</li>
-                <li>Google Gemini API</li>
-              </ul>
-            </dd>
-          </div>
-          <div class="skills__row">
-            <dt>Web</dt>
-            <dd>
-              <ul class="chips">
-                <li>Responsive layout</li>
-                <li>Semantic HTML</li>
-                <li>Accessibility basics</li>
-              </ul>
-            </dd>
-          </div>
-          <div class="skills__row">
-            <dt>Tools</dt>
-            <dd>
-              <ul class="chips">
-                <li>Git and GitHub</li>
-                <li>VS Code</li>
-                <li>Jupyter Notebook</li>
-                <li>Google Colab</li>
-              </ul>
-            </dd>
-          </div>
-          <div class="skills__row">
-            <dt>Data and AI</dt>
-            <dd>
-              <ul class="chips">
-                <li>Pandas</li>
-                <li>NumPy</li>
-                <li>scikit-learn</li>
-                <li>Matplotlib</li>
-                <li>Data cleaning</li>
-                <li>TensorFlow (learning)</li>
-              </ul>
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </section>
+      <section id="skills" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">02</span> &mdash; skills</p>
+        </div>
+        <hr class="rule">
 
-    <section id="projects" class="section">
-      <div class="section__inner">
-        <h2 class="section__title">Projects</h2>
-
-        <article class="featured">
-          <div class="featured__preview" aria-hidden="true">
-            <div class="window">
-              <div class="window__bar"><span></span><span></span><span></span></div>
-              <pre class="window__code"><code><span class="tok-k">const</span> <span class="tok-v">stack</span> = {
-  markup:  <span class="tok-s">"HTML5"</span>,
-  styles:  <span class="tok-s">"CSS3"</span>,
-  scripts: <span class="tok-s">"Vanilla JS"</span>,
-  deps:    <span class="tok-n">0</span>,
-};</code></pre>
-            </div>
-          </div>
-          <div class="featured__body">
-            <h3 class="featured__title">This portfolio</h3>
-            <p>A responsive, accessible personal site written by hand in plain HTML, CSS, and JavaScript, with no frameworks or build tools. It has a light and dark theme, keyboard-friendly navigation, and a working contact form.</p>
-            <ul class="chips">
-              <li>HTML</li>
-              <li>CSS</li>
-              <li>JavaScript</li>
-              <li>GitHub Pages</li>
+        <div class="skills__groups stagger">
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Languages</h3>
+            <ul class="skill-group__tags">
+              <li>Python</li>
+              <li>SQL</li>
+              <li>HTML/CSS</li>
+              <li>JavaScript (basic)</li>
             </ul>
-            <a class="text-link" href="https://github.com/Bread03566/Personal-Portfolio" target="_blank" rel="noopener noreferrer">View the source on GitHub<span class="visually-hidden"> (opens in a new tab)</span></a>
-          </div>
-        </article>
-
-        <div class="next-up">
-          <article class="next-up__slot">
-            <h3>Next project</h3>
-            <p>A Python or JavaScript app with a real user flow. Details will appear here once it's underway.</p>
           </article>
-          <article class="next-up__slot">
-            <h3>Next project</h3>
-            <p>A data or API project that shows how I work with live data. Details will appear here once it's underway.</p>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">AI / Machine Learning</h3>
+            <ul class="skill-group__tags">
+              <li>Machine Learning Basics</li>
+              <li>Data Analysis</li>
+              <li>NLP (basics)</li>
+              <li>Prompt Engineering</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Libraries &amp; Frameworks</h3>
+            <ul class="skill-group__tags">
+              <li>Pandas</li>
+              <li>NumPy</li>
+              <li>scikit-learn</li>
+              <li>Matplotlib</li>
+              <li>TensorFlow (learning)</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Tools</h3>
+            <ul class="skill-group__tags">
+              <li>Git / GitHub</li>
+              <li>Jupyter Notebook</li>
+              <li>Google Colab</li>
+              <li>VS Code</li>
+              <li>REST APIs</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Concepts</h3>
+            <ul class="skill-group__tags">
+              <li>Data Cleaning</li>
+              <li>Data Visualization</li>
+              <li>Model Training &amp; Evaluation (basics)</li>
+            </ul>
           </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="contact" class="section section--tint">
-      <div class="section__inner">
-        <h2 class="section__title">Contact</h2>
-        <p class="contact__lead">I'm available for entry-level software engineering roles and internships. The quickest way to reach me is email.</p>
+      <section id="projects" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">03</span> &mdash; projects</p>
+        </div>
+        <hr class="rule">
+
+        <div class="projects__grid stagger">
+          <article class="project-card reveal-item">
+            <span class="project-card__badge">Live</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">This Portfolio</h3>
+            <p class="project-card__desc">A responsive site built by hand with plain HTML, CSS, and JavaScript. No frameworks, hosted on GitHub Pages.</p>
+          </article>
+
+          <article class="project-card reveal-item">
+            <span class="project-card__badge">In Progress</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">Project Coming Soon</h3>
+            <p class="project-card__desc">Project details coming soon. Check back for updates as this build progresses.</p>
+          </article>
+
+          <article class="project-card reveal-item">
+            <span class="project-card__badge">In Progress</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">Project Coming Soon</h3>
+            <p class="project-card__desc">Project details coming soon. Check back for updates as this build progresses.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="section reveal">
+        <div class="section-head">
+          <p class="section-head__label"><span class="section-head__index">04</span> &mdash; contact</p>
+        </div>
+        <hr class="rule">
 
         <div class="contact__content">
-          <ul class="contact__links">
-            <li>
-              <a class="contact-link" href="mailto:benchcanzana@gmail.com">
-                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div class="contact__cards stagger">
+            <a class="contact-card reveal-item" href="mailto:benchcanzana@gmail.com" aria-label="Send an email to benchcanzana@gmail.com">
+              <div class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
                   <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>
-                  <span class="contact-link__label">Email</span>
-                  <span class="contact-link__value">benchcanzana@gmail.com</span>
-                </span>
-              </a>
-            </li>
-            <li>
-              <a class="contact-link" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer">
-                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              </div>
+              <span class="contact-card__label">Email</span>
+              <span class="contact-card__value">benchcanzana@gmail.com</span>
+            </a>
+
+            <a class="contact-card reveal-item" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Visit Bench Ivan Canzana's GitHub profile (opens in a new tab)">
+              <div class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
                 </svg>
-                <span>
-                  <span class="contact-link__label">GitHub<span class="visually-hidden"> (opens in a new tab)</span></span>
-                  <span class="contact-link__value">github.com/Bread03566</span>
-                </span>
-              </a>
-            </li>
-          </ul>
+              </div>
+              <span class="contact-card__label">GitHub</span>
+              <span class="contact-card__value">github.com/Bread03566</span>
+            </a>
+          </div>
 
-          <form class="contact-form" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form">
+          <form class="contact-form reveal-item" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form">
             <div class="form-field">
               <label for="contact-name">Name</label>
-              <input type="text" id="contact-name" name="name" autocomplete="name" required>
+              <input type="text" id="contact-name" name="name" autocomplete="name" placeholder="Your name" required>
             </div>
             <div class="form-field">
               <label for="contact-email">Email</label>
-              <input type="email" id="contact-email" name="email" autocomplete="email" required>
+              <input type="email" id="contact-email" name="email" autocomplete="email" placeholder="you@example.com" required>
             </div>
             <div class="form-field">
               <label for="contact-message">Message</label>
-              <textarea id="contact-message" name="message" rows="5" required></textarea>
+              <textarea id="contact-message" name="message" rows="5" placeholder="What would you like to talk about?" required></textarea>
             </div>
-            <button type="submit" class="btn btn--primary btn--block">Send message</button>
-            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+            <button type="submit" class="btn btn--primary btn--block">Send Message</button>
           </form>
         </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__content">
+        <p class="site-footer__copyright">&copy; <span id="current-year">2026</span> Bench Ivan Canzana. All rights reserved.</p>
+
+        <ul class="site-footer__links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="site-footer__social">
+          <a href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Bench Ivan Canzana on GitHub (opens in a new tab)">
+            <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
       </div>
-    </section>
+    </footer>
 
-  </main>
+  </div>
 
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <p>&copy; <span id="current-year">2026</span> Bench Ivan Canzana</p>
-      <ul class="site-footer__links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer">GitHub<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-      </ul>
-    </div>
-  </footer>
-
-  <script src="./script.js?v=2"></script>
+  <script src="./script.js?v=3"></script>
 </body>
 </html>
