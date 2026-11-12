@@ -849,6 +849,7 @@ textarea {
   .hero > :nth-child(3) { --i: 2; }
   .hero > :nth-child(4) { --i: 3; }
   .hero > :nth-child(5) { --i: 4; }
+  .hero > :nth-child(6) { --i: 5; }
 
   @keyframes hero-in {
     from {
@@ -1340,6 +1341,66 @@ textarea {
   box-shadow: 0 0 0 3px var(--color-glow-strong);
 }
 
+/* Availability line, "how I work" points, copy-email button */
+.hero__status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: calc(var(--space-md) * -1) 0 var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.hero__status-dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-text);
+}
+
+.about__points {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+
+.about__points li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.about__points li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--color-text);
+}
+
+.copy-email.is-copied {
+  border-color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__status-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    animation: status-pulse 2.4s ease-out infinite;
+  }
+
+  @keyframes status-pulse {
+    from { opacity: 0.5; scale: 1; }
+    to { opacity: 0; scale: 3; }
+  }
+}
+
 /* Animated underline on footer links and sidebar social links */
 .site-footer__links a,
 .sidebar__social-link {
@@ -1459,7 +1520,7 @@ textarea {
   }
 
   /* Scroll cue: a line that keeps drawing downward */
-  .js .hero > :nth-child(6) { --i: 5; }
+  .js .hero > :nth-child(7) { --i: 6; }
 
   .hero__scroll-line::after {
     animation: scroll-cue 2s cubic-bezier(0.5, 0, 0.2, 1) infinite;

@@ -45,7 +45,7 @@
       if (!window.__motionReady) document.documentElement.classList.remove('js');
     }, 3000);
   </script>
-  <link rel="stylesheet" href="./style.css?v=13">
+  <link rel="stylesheet" href="./style.css?v=14">
 </head>
 <body>
 
@@ -119,6 +119,7 @@
         <h1 class="hero__name">Bench Ivan Canzana</h1>
         <p class="hero__role">Aspiring Software Engineer</p>
         <p class="hero__tagline">Building working software, one project at a time.</p>
+        <p class="hero__status"><span class="hero__status-dot" aria-hidden="true"></span>Open to entry-level software engineer roles</p>
         <div class="hero__actions">
           <a href="#contact" class="btn btn--primary">Get In Touch</a>
           <a href="#projects" class="btn btn--secondary">View Projects</a>
@@ -155,6 +156,11 @@
             <p>
               I'm eager to join a team where I can learn, contribute, and ship real code from day one.
             </p>
+            <ul class="about__points" aria-label="How I work">
+              <li>Break problems into small, testable pieces</li>
+              <li>Write tests alongside code (pytest, Vitest, PHPUnit)</li>
+              <li>Work across the stack, from React front ends to Laravel and FastAPI back ends</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -305,6 +311,10 @@
               <span class="contact-card__label">LinkedIn</span>
               <span class="contact-card__value">linkedin.com/in/bench-ivan-canzana</span>
             </a>
+
+            <button type="button" class="btn btn--secondary copy-email reveal-item" id="copy-email" data-email="benchcanzana@gmail.com">
+              <span id="copy-email-label">Copy email address</span>
+            </button>
           </div>
 
           <form class="contact-form reveal-item" data-reveal="right" style="--i: 4" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form" novalidate>
@@ -470,6 +480,6 @@
     </svg>
   </button>
 
-  <script src="./script.js?v=13"></script>
+  <script src="./script.js?v=14"></script>
 </body>
 </html>

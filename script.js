@@ -520,8 +520,61 @@ const initMotionPolish = () => {
   }
 };
 
+/**
+ * Copy-email button with a short "Copied" confirmation.
+ */
+const initCopyEmail = () => {
+  const button = document.getElementById('copy-email');
+  const label = document.getElementById('copy-email-label');
+  if (!button || !label) return;
+
+  const original = label.textContent;
+  let timer;
+
+  const confirm = (text, copied) => {
+    label.textContent = text;
+    button.classList.toggle('is-copied', copied);
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      label.textContent = original;
+      button.classList.remove('is-copied');
+    }, 2000);
+  };
+
+  const fallbackCopy = (text) => {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch (error) {
+      ok = false;
+    }
+    area.remove();
+    return ok;
+  };
+
+  button.addEventListener('click', async () => {
+    const email = button.dataset.email;
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(email);
+      ok = true;
+    } catch (error) {
+      ok = fallbackCopy(email);
+    }
+    confirm(ok ? 'Copied!' : `Copy failed: ${email}`, ok);
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   window.__motionReady = true;
+  initCopyEmail();
   initMotionPolish();
   initSidebarToggle();
   initThemeToggle();
