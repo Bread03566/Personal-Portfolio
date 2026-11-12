@@ -469,7 +469,59 @@ const initAcesDialog = () => {
   });
 };
 
+
+/**
+ * Motion helpers: splits the hero name into words for a masked rise,
+ * indexes skill tags and About paragraphs for staggered entrances, and adds
+ * a gentle magnetic pull to primary buttons on fine pointers.
+ * Skipped entirely when the visitor prefers reduced motion.
+ */
+const initMotionPolish = () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const name = document.querySelector('.hero__name');
+  if (name) {
+    const text = name.textContent.trim();
+    name.setAttribute('aria-label', text);
+    name.textContent = '';
+    const words = text.split(/\s+/);
+    words.forEach((word, index) => {
+      const outer = document.createElement('span');
+      outer.className = 'word';
+      outer.setAttribute('aria-hidden', 'true');
+      const inner = document.createElement('span');
+      inner.className = 'word__inner';
+      inner.style.setProperty('--w', String(index));
+      inner.textContent = word;
+      outer.appendChild(inner);
+      name.appendChild(outer);
+      if (index < words.length - 1) name.appendChild(document.createTextNode(' '));
+    });
+  }
+
+  document.querySelectorAll('.skill-group__tags').forEach((list) => {
+    Array.from(list.children).forEach((tag, index) => tag.style.setProperty('--t', String(index)));
+  });
+
+  document.querySelectorAll('.about__text > p').forEach((p, index) => p.style.setProperty('--p', String(index)));
+
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.hero__actions .btn, .contact-form .btn--primary').forEach((btn) => {
+      btn.addEventListener('pointermove', (event) => {
+        const rect = btn.getBoundingClientRect();
+        const dx = (event.clientX - (rect.left + rect.width / 2)) / rect.width;
+        const dy = (event.clientY - (rect.top + rect.height / 2)) / rect.height;
+        btn.style.translate = `${(dx * 8).toFixed(1)}px ${(dy * 6).toFixed(1)}px`;
+      });
+      btn.addEventListener('pointerleave', () => {
+        btn.style.translate = '';
+      });
+    });
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+  initMotionPolish();
   initSidebarToggle();
   initThemeToggle();
   initScrollSpy();

@@ -1248,3 +1248,216 @@ textarea {
 .to-top:hover {
   border-color: var(--color-text);
 }
+
+/* ==========================================================================
+   18. Motion polish (all gated by reduced-motion preference)
+   ========================================================================== */
+.hero__scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.hero__scroll:hover {
+  color: var(--color-text);
+}
+
+.hero__scroll-line {
+  position: relative;
+  width: 1px;
+  height: 36px;
+  overflow: hidden;
+  background-color: var(--color-border);
+}
+
+.hero__scroll-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-text);
+  transform: translateY(-100%);
+}
+
+.about__photo {
+  transition: filter 500ms ease, transform 500ms ease, border-color var(--transition-base);
+}
+
+.sidebar__link {
+  transition: color var(--transition-fast), translate var(--transition-base);
+}
+
+.sidebar__link:hover {
+  translate: 4px 0;
+}
+
+.skill-group__tags li {
+  transition: border-color var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.skill-group__tags li:hover {
+  transform: translateY(-2px);
+  background-color: var(--color-surface-alt);
+}
+
+.btn {
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    translate 200ms ease-out;
+}
+
+.site-footer__social a {
+  display: inline-flex;
+  transition: color var(--transition-fast), transform var(--transition-base);
+}
+
+.site-footer__social a:hover {
+  transform: translateY(-3px) scale(1.12);
+}
+
+.form-field label {
+  transition: color var(--transition-fast);
+}
+
+.form-field:focus-within label {
+  color: var(--color-text);
+}
+
+.form-field input,
+.form-field textarea {
+  transition: border-color var(--transition-fast), box-shadow var(--transition-base);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  box-shadow: 0 0 0 3px var(--color-glow-strong);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero name: words rise out of a mask, one after another */
+  .js .hero__name .word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+
+  .js .hero__name .word__inner {
+    display: inline-block;
+    animation: word-up 800ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--w, 0) * 120ms + 350ms);
+  }
+
+  @keyframes word-up {
+    from { translate: 0 105%; }
+    to { translate: 0 0; }
+  }
+
+  /* Scroll cue: a line that keeps drawing downward */
+  .js .hero > :nth-child(6) { --i: 5; }
+
+  .hero__scroll-line::after {
+    animation: scroll-cue 2s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+    animation-delay: 1.6s;
+  }
+
+  @keyframes scroll-cue {
+    0% { transform: translateY(-100%); }
+    55% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+  }
+
+  /* Background orbs drift gently, on top of their scroll parallax */
+  .bg-parallax__orb--a { animation: orb-float-a 14s ease-in-out infinite alternate; }
+  .bg-parallax__orb--b { animation: orb-float-b 18s ease-in-out infinite alternate; }
+
+  @keyframes orb-float-a {
+    from { translate: 0 0; }
+    to { translate: -40px 30px; }
+  }
+
+  @keyframes orb-float-b {
+    from { translate: 0 0; }
+    to { translate: 50px -30px; }
+  }
+
+  /* About: paragraphs follow the photo one after another */
+  .js .about__text > p {
+    opacity: 0;
+    translate: 0 14px;
+    transition: opacity 700ms ease, translate 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(var(--p, 0) * 160ms + 300ms);
+  }
+
+  .js .reveal.is-visible .about__text > p {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* Skills: tags pop in after their group appears */
+  .js .skill-group__tags li {
+    opacity: 0;
+    translate: 0 8px;
+    transition:
+      opacity 500ms ease calc(var(--t, 0) * 55ms + 350ms),
+      translate 500ms cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--t, 0) * 55ms + 350ms),
+      border-color var(--transition-fast),
+      transform var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  .js .reveal.is-visible .skill-group__tags li {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* Project dialogs open with a soft rise, backdrop fades in */
+  .aces-dialog[open] {
+    animation: dialog-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .aces-dialog[open]::backdrop {
+    animation: backdrop-in 320ms ease;
+  }
+
+  @keyframes dialog-in {
+    from { opacity: 0; translate: 0 18px; scale: 0.97; }
+  }
+
+  @keyframes backdrop-in {
+    from { opacity: 0; }
+  }
+
+  /* Form feedback */
+  .form-status:not([hidden]) {
+    animation: status-in 400ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .form-field__error:not([hidden]) {
+    animation: status-in 300ms ease;
+  }
+
+  .form-field input[aria-invalid="true"],
+  .form-field textarea[aria-invalid="true"] {
+    animation: field-shake 350ms ease;
+  }
+
+  @keyframes status-in {
+    from { opacity: 0; translate: 0 -6px; }
+  }
+
+  @keyframes field-shake {
+    20% { translate: -5px 0; }
+    40% { translate: 5px 0; }
+    60% { translate: -3px 0; }
+    80% { translate: 2px 0; }
+  }
+}
