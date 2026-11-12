@@ -4,26 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bench Ivan Canzana | Aspiring Software Engineer</title>
-  <meta name="description" content="Portfolio of Bench Ivan Canzana, a graduating Computer Science student building full-stack web and Python projects. Open to software developer internships and junior roles.">
-  <meta name="theme-color" content="#0e1014" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
+
   <link rel="canonical" href="https://bread03566.github.io/Personal-Portfolio/">
-
-  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
-
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Bench Ivan Canzana">
-  <meta property="og:title" content="Bench Ivan Canzana | Aspiring Software Engineer">
-  <meta property="og:description" content="Full-stack web and Python projects by a graduating Computer Science student. Open to internships and junior developer roles.">
-  <meta property="og:url" content="https://bread03566.github.io/Personal-Portfolio/">
-  <meta property="og:image" content="https://bread03566.github.io/Personal-Portfolio/assets/profile.jpg">
-  <meta property="og:image:alt" content="Portrait of Bench Ivan Canzana">
-
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Bench Ivan Canzana | Aspiring Software Engineer">
-  <meta name="twitter:description" content="Full-stack web and Python projects by a graduating Computer Science student. Open to internships and junior developer roles.">
-  <meta name="twitter:image" content="https://bread03566.github.io/Personal-Portfolio/assets/profile.jpg">
-
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -37,17 +21,24 @@
   }
   </script>
 
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="alternate icon" href="./assets/favicon.svg">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bench Ivan Canzana | Aspiring Software Engineer">
+  <meta property="og:description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
+  <meta property="og:url" content="https://Bread03566.github.io/Personal-Portfolio/">
+  <meta property="og:image" content="https://Bread03566.github.io/Personal-Portfolio/assets/profile.jpg">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bench Ivan Canzana | Aspiring Software Engineer">
+  <meta name="twitter:description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
+  <meta name="twitter:image" content="https://Bread03566.github.io/Personal-Portfolio/assets/profile.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script>
-    document.documentElement.classList.add('js');
-    try {
-      var saved = localStorage.getItem('portfolio-theme');
-      var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-      document.documentElement.setAttribute('data-theme', saved || (prefersLight ? 'light' : 'dark'));
-    } catch (e) { /* storage blocked: keep the default dark theme */ }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="./style.css?v=8">
 </head>
 <body>
@@ -55,506 +46,453 @@
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <div class="scroll-progress" aria-hidden="true"><span class="scroll-progress__bar" id="scroll-progress-bar"></span></div>
+  <div class="bg-parallax" aria-hidden="true">
+    <span class="bg-parallax__orb bg-parallax__orb--a" data-parallax="0.12"></span>
+    <span class="bg-parallax__orb bg-parallax__orb--b" data-parallax="-0.08"></span>
+  </div>
 
-  <header class="site-header" id="site-header">
-    <div class="site-header__inner">
-      <a href="#home" class="brand" aria-label="Bench Ivan Canzana, back to top">
-        <span class="brand__mark" aria-hidden="true">BC</span>
-        <span class="brand__name">Bench Ivan Canzana</span>
-      </a>
+  <div class="layout">
 
-      <nav id="site-nav" class="site-nav" aria-label="Sections">
-        <ul class="site-nav__list">
-          <li><a href="#about" class="site-nav__link" data-nav-link>About</a></li>
-          <li><a href="#skills" class="site-nav__link" data-nav-link>Skills</a></li>
-          <li><a href="#projects" class="site-nav__link" data-nav-link>Projects</a></li>
-          <li><a href="#education" class="site-nav__link" data-nav-link>Education</a></li>
-          <li><a href="#contact" class="site-nav__link" data-nav-link>Contact</a></li>
-        </ul>
-      </nav>
+    <header class="topbar">
+      <button type="button" id="nav-toggle" class="hamburger" aria-expanded="false" aria-controls="sidebar" aria-label="Toggle navigation menu">
+        <span class="hamburger__bar" aria-hidden="true"></span>
+        <span class="hamburger__bar" aria-hidden="true"></span>
+        <span class="hamburger__bar" aria-hidden="true"></span>
+      </button>
+      <a href="#home" class="topbar__brand">Bench Ivan Canzana</a>
+      <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to light mode">
+        <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
 
-      <div class="site-header__tools">
-        <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to light mode">
-          <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.6"/>
-            <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button type="button" id="nav-toggle" class="icon-button nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation menu">
-          <span class="nav-toggle__bar" aria-hidden="true"></span>
-          <span class="nav-toggle__bar" aria-hidden="true"></span>
-          <span class="nav-toggle__bar" aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
-  </header>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
 
-  <main id="main-content">
+    <aside id="sidebar" class="sidebar" aria-label="Primary navigation">
+      <div class="sidebar__inner">
+        <a href="#home" class="sidebar__brand">Bench Ivan<br>Canzana</a>
 
-    <!-- ===== Hero ===== -->
-    <section id="home" class="hero" aria-labelledby="hero-title">
-      <div class="container hero__grid">
-        <div class="hero__copy">
-          <p class="status-pill hero-in" style="--d: 0">
-            <span class="status-pill__dot" aria-hidden="true"></span>
-            Open to internships and junior developer roles
-          </p>
-          <h1 class="hero__name hero-in" id="hero-title" style="--d: 1">Bench Ivan Canzana</h1>
-          <p class="hero__role hero-in" style="--d: 2">Aspiring Software Engineer</p>
-          <p class="hero__intro hero-in" style="--d: 3">
-            I build practical web and Python applications. My latest work is a full-stack learning management
-            system for our thesis and an AI study app that turns handouts into quizzes.
-          </p>
-          <div class="hero__actions hero-in" style="--d: 4">
-            <a href="#projects" class="btn btn--primary">View projects</a>
-            <a href="#contact" class="btn btn--secondary">Get in touch</a>
-          </div>
-          <ul class="hero__links hero-in" style="--d: 5" aria-label="Profiles">
-            <li>
-              <a class="text-link" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
-                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z"/></svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a class="text-link" href="mailto:benchcanzana@gmail.com" aria-label="Email benchcanzana@gmail.com">
-                <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                benchcanzana@gmail.com
-              </a>
-            </li>
+        <nav aria-label="Sections">
+          <ul class="sidebar__nav">
+            <li><a href="#home" class="sidebar__link" data-nav-link>Home</a></li>
+            <li><a href="#about" class="sidebar__link" data-nav-link>01 &mdash; About</a></li>
+            <li><a href="#skills" class="sidebar__link" data-nav-link>02 &mdash; Skills</a></li>
+            <li><a href="#projects" class="sidebar__link" data-nav-link>03 &mdash; Projects</a></li>
+            <li><a href="#contact" class="sidebar__link" data-nav-link>04 &mdash; Contact</a></li>
           </ul>
-        </div>
+        </nav>
 
-        <figure class="hero__preview hero-in" style="--d: 3">
-          <div class="browser" data-parallax="0.04">
-            <div class="browser__bar" aria-hidden="true">
-              <span class="browser__dot"></span><span class="browser__dot"></span><span class="browser__dot"></span>
-              <span class="browser__url">aces.lms-edu.app</span>
-            </div>
-            <img
-              src="./assets/aces-student.jpg"
-              alt="ACES LMS student dashboard showing a calendar, to-do list, and course list"
-              width="1280" height="720" fetchpriority="high" decoding="async">
-          </div>
-          <figcaption class="hero__caption">
-            ACES LMS, our thesis project.
-            <a class="text-link" href="#projects">See how it works</a>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
+        <div class="sidebar__footer">
+          <a class="sidebar__social-link" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer">github &#8599;</a>
+          <a class="sidebar__social-link" href="mailto:benchcanzana@gmail.com">email &#8599;</a>
 
-    <!-- ===== About ===== -->
-    <section id="about" class="section" aria-labelledby="about-title">
-      <div class="container">
-        <h2 class="section__title reveal" id="about-title">About me</h2>
-
-        <div class="about reveal">
-          <img
-            class="about__photo"
-            src="./assets/profile.jpg"
-            alt="Portrait of Bench Ivan Canzana"
-            width="240" height="240" loading="lazy" decoding="async">
-
-          <div class="about__text">
-            <p>
-              I'm a graduating Computer Science student and aspiring software engineer who likes turning ideas
-              into practical, working applications. I enjoy breaking a problem into small pieces and solving
-              them one at a time, writing clean code in Python and JavaScript.
-            </p>
-            <p>
-              So far I've built a full-stack thesis system and an AI study app, and I learn fastest by
-              shipping something real and fixing what breaks. I'm looking for an internship or junior role
-              on a team where I can learn, contribute, and ship real code from day one.
-            </p>
-            <dl class="facts">
-              <div class="facts__item">
-                <dt>Studying</dt>
-                <dd>Computer Science</dd>
-              </div>
-              <div class="facts__item">
-                <dt>Strongest in</dt>
-                <dd>Python and JavaScript</dd>
-              </div>
-              <div class="facts__item">
-                <dt>Built so far</dt>
-                <dd>A full-stack thesis system and an AI study app</dd>
-              </div>
-              <div class="facts__item">
-                <dt>Looking for</dt>
-                <dd>Internship or junior developer role</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Skills ===== -->
-    <section id="skills" class="section section--alt" aria-labelledby="skills-title">
-      <div class="container">
-        <h2 class="section__title reveal" id="skills-title">Technical skills</h2>
-        <p class="section__lead reveal">The tools I've used in my thesis and personal projects.</p>
-
-        <div class="skills stagger">
-          <article class="skill-group reveal">
-            <h3 class="skill-group__title">Programming languages</h3>
-            <ul class="tags">
-              <li>Python</li><li>JavaScript</li><li>PHP</li><li>SQL</li><li>HTML/CSS</li>
-            </ul>
-          </article>
-
-          <article class="skill-group reveal">
-            <h3 class="skill-group__title">Frontend development</h3>
-            <ul class="tags">
-              <li>React 19</li><li>React Router</li><li>Vite</li><li>Tailwind CSS</li>
-            </ul>
-          </article>
-
-          <article class="skill-group reveal">
-            <h3 class="skill-group__title">Backend development</h3>
-            <ul class="tags">
-              <li>Laravel 12</li><li>FastAPI</li><li>REST APIs</li><li>SQLAlchemy</li><li>Session auth and email OTP</li>
-            </ul>
-          </article>
-
-          <article class="skill-group reveal">
-            <h3 class="skill-group__title">Databases</h3>
-            <ul class="tags">
-              <li>MySQL</li><li>SQLite</li>
-            </ul>
-          </article>
-
-          <article class="skill-group reveal">
-            <h3 class="skill-group__title">Development tools</h3>
-            <ul class="tags">
-              <li>Git / GitHub</li><li>Docker</li><li>VS Code</li><li>Composer / npm</li><li>Google Colab</li>
-              <li>PHPUnit</li><li>Vitest</li><li>pytest</li><li>ESLint</li>
-            </ul>
-          </article>
-
-          <article class="skill-group reveal">
-            <h3 class="skill-group__title">Other technologies</h3>
-            <ul class="tags">
-              <li>Google Gemini API</li><li>Cloudflare R2</li><li>Machine learning basics</li><li>Prompt engineering</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Projects ===== -->
-    <section id="projects" class="section" aria-labelledby="projects-title">
-      <div class="container">
-        <h2 class="section__title reveal" id="projects-title">Projects</h2>
-        <p class="section__lead reveal">Open a project to see the problem it solves, what I built, and the stack behind it.</p>
-
-        <article class="feature reveal">
-          <button type="button" class="feature__media" data-dialog-open="dialog-aces" aria-haspopup="dialog" aria-label="Open ACES LMS project details">
-            <img src="./assets/aces-teacher.jpg"
-              alt="ACES LMS teacher dashboard with courses, assignments, resources, gradebook, and submitted grades in the sidebar"
-              width="1280" height="720" loading="lazy" decoding="async">
+          <button type="button" id="theme-toggle-desktop" class="theme-toggle-desktop" aria-pressed="false" aria-label="Switch to light mode">
+            <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="theme-toggle-label">Dark mode</span>
           </button>
-          <div class="feature__body">
-            <p class="badge">Thesis project</p>
-            <h3 class="feature__title">ACES LMS</h3>
-            <p>
-              A learning management system for a college, with a separate portal for students, teachers,
-              admins, and system admins. Built with React, Laravel, MySQL, and Docker.
-            </p>
-            <ul class="tags tags--compact" aria-label="Main technologies">
-              <li>React 19</li><li>Laravel 12</li><li>MySQL</li><li>Docker</li>
-            </ul>
-            <div class="actions">
-              <button type="button" class="btn btn--primary" data-dialog-open="dialog-aces" aria-haspopup="dialog">View details and demo</button>
-              <a class="btn btn--secondary" href="https://aces.lms-edu.app" target="_blank" rel="noopener noreferrer" aria-label="Visit the ACES LMS live site (opens in a new tab)">Live site</a>
-            </div>
-          </div>
-        </article>
+        </div>
+      </div>
+    </aside>
 
-        <div class="project-pair">
-          <article class="project reveal">
-            <p class="badge">AI project</p>
-            <h3 class="project__title">Kabisado</h3>
+    <main id="main-content" class="content">
+
+      <section id="home" class="hero" aria-label="Introduction">
+        <p class="hero__eyebrow">Hello, I'm</p>
+        <h1 class="hero__name">Bench Ivan Canzana</h1>
+        <p class="hero__role">Aspiring Software Engineer</p>
+        <p class="hero__tagline">Building working software, one project at a time.</p>
+        <div class="hero__actions">
+          <a href="#contact" class="btn btn--primary">Get In Touch</a>
+          <a href="#projects" class="btn btn--secondary">View Projects</a>
+        </div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-head reveal-item">
+          <p class="section-head__label"><span class="section-head__index">01</span> &mdash; about</p>
+        </div>
+        <hr class="rule reveal-item" data-reveal="line">
+
+        <div class="about__content">
+          <img
+            class="about__photo reveal-item"
+            data-reveal="left"
+            style="--i: 2"
+            src="./assets/profile.jpg"
+            alt="Portrait photo of Bench Ivan Canzana"
+            width="200"
+            height="200"
+            loading="lazy"
+          >
+          <div class="about__text reveal-item" data-reveal="right" style="--i: 3">
             <p>
-              An AI study companion for students. Upload a handout and get summaries, flashcards, and quizzes
-              with instant feedback.
+              I'm a graduating student and aspiring Software Engineer who loves turning ideas into
+              practical, working applications. I enjoy breaking problems into small pieces and
+              writing clean code in Python and JavaScript. So far I have built a full-stack thesis system and an AI study app.
             </p>
-            <ul class="tags tags--compact" aria-label="Main technologies">
-              <li>FastAPI</li><li>React</li><li>SQLite</li><li>Gemini API</li>
+            <p>
+              I'm eager to join a team where I can learn, contribute, and ship real code from day one.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills" class="section reveal">
+        <div class="section-head reveal-item">
+          <p class="section-head__label"><span class="section-head__index">02</span> &mdash; skills</p>
+        </div>
+        <hr class="rule reveal-item" data-reveal="line">
+
+        <div class="skills__groups stagger">
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Languages</h3>
+            <ul class="skill-group__tags">
+              <li>Python</li>
+              <li>JavaScript</li>
+              <li>PHP</li>
+              <li>SQL</li>
+              <li>HTML/CSS</li>
             </ul>
-            <div class="actions">
-              <button type="button" class="btn btn--secondary" data-dialog-open="dialog-kabisado" aria-haspopup="dialog">View details</button>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Frontend</h3>
+            <ul class="skill-group__tags">
+              <li>React 19</li>
+              <li>React Router</li>
+              <li>Vite</li>
+              <li>Tailwind CSS</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Backend</h3>
+            <ul class="skill-group__tags">
+              <li>Laravel 12</li>
+              <li>REST APIs</li>
+              <li>MySQL</li>
+              <li>FastAPI</li>
+              <li>SQLAlchemy</li>
+              <li>SQLite</li>
+              <li>Docker</li>
+              <li>Session Auth &amp; Email OTP</li>
+              <li>Cloudflare R2</li>
+              <li>Google Gemini API</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">AI / Machine Learning</h3>
+            <ul class="skill-group__tags">
+              <li>Machine Learning Basics</li>
+              <li>Prompt Engineering</li>
+            </ul>
+          </article>
+
+          <article class="skill-group reveal-item">
+            <h3 class="skill-group__title">Tools</h3>
+            <ul class="skill-group__tags">
+              <li>Git / GitHub</li>
+              <li>Google Colab</li>
+              <li>VS Code</li>
+              <li>Composer / npm</li>
+              <li>PHPUnit</li>
+              <li>Vitest</li>
+              <li>ESLint</li>
+              <li>pytest</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="projects" class="section reveal">
+        <div class="section-head reveal-item">
+          <p class="section-head__label"><span class="section-head__index">03</span> &mdash; projects</p>
+        </div>
+        <hr class="rule reveal-item" data-reveal="line">
+
+        <div class="projects__grid stagger">
+          <article class="project-card reveal-item" data-reveal="scale">
+            <span class="project-card__badge">Thesis</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">ACES LMS</h3>
+            <p class="project-card__desc">Our thesis project: a learning management system for a college, with a separate portal for each role. Built with React, Laravel, MySQL, and Docker.</p>
+            <div class="project-card__actions">
+              <button type="button" class="btn btn--primary project-card__btn" id="aces-open" aria-haspopup="dialog">View demo</button>
+              <a class="btn btn--secondary project-card__btn" href="https://aces.lms-edu.app" target="_blank" rel="noopener noreferrer" aria-label="Visit the ACES LMS live site (opens in a new tab)">Live site &#8599;</a>
             </div>
           </article>
 
-          <article class="project reveal">
-            <p class="badge">Live</p>
-            <h3 class="project__title">This portfolio</h3>
-            <p>
-              A responsive site built by hand with plain HTML, CSS, and JavaScript. No frameworks, hosted on
-              GitHub Pages.
-            </p>
-            <ul class="tags tags--compact" aria-label="Main technologies">
-              <li>HTML</li><li>CSS</li><li>JavaScript</li>
-            </ul>
-            <div class="actions">
-              <button type="button" class="btn btn--secondary" data-dialog-open="dialog-portfolio" aria-haspopup="dialog">View details</button>
-              <a class="btn btn--secondary" href="https://github.com/Bread03566/Personal-Portfolio" target="_blank" rel="noopener noreferrer" aria-label="View the portfolio source code on GitHub (opens in a new tab)">Source code</a>
+          <article class="project-card reveal-item" data-reveal="scale">
+            <span class="project-card__badge">Live</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">This Portfolio</h3>
+            <p class="project-card__desc">A responsive site built by hand with plain HTML, CSS, and JavaScript. No frameworks, hosted on GitHub Pages.</p>
+            <div class="project-card__actions">
+              <button type="button" class="btn btn--primary project-card__btn" data-dialog-open="dialog-portfolio" aria-haspopup="dialog">View details</button>
+              <a class="btn btn--secondary project-card__btn" href="https://github.com/Bread03566/Personal-Portfolio" target="_blank" rel="noopener noreferrer" aria-label="View the portfolio source code on GitHub (opens in a new tab)">Source code &#8599;</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal-item" data-reveal="scale">
+            <span class="project-card__badge">AI Project</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">Kabisado</h3>
+            <p class="project-card__desc">An AI study companion for students. Upload a handout and get summaries, flashcards, and quizzes with instant feedback. Built with Python (FastAPI), React, and SQLite, using the Gemini API.</p>
+            <div class="project-card__actions">
+              <button type="button" class="btn btn--primary project-card__btn" data-dialog-open="dialog-kabisado" aria-haspopup="dialog">View details</button>
             </div>
           </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ===== Education ===== -->
-    <section id="education" class="section section--alt" aria-labelledby="education-title">
-      <div class="container">
-        <h2 class="section__title reveal" id="education-title">Education</h2>
+      <section id="contact" class="section reveal">
+        <div class="section-head reveal-item">
+          <p class="section-head__label"><span class="section-head__index">04</span> &mdash; contact</p>
+        </div>
+        <hr class="rule reveal-item" data-reveal="line">
 
-        <article class="education reveal">
-          <h3 class="education__degree">Computer Science</h3>
-          <p class="education__meta">Graduating student</p>
-          <p>
-            My coursework culminated in a thesis: ACES LMS, a full-stack learning management system built with
-            a team. I also built Kabisado, an AI study app, on my own time.
-          </p>
-          <ul class="tags tags--compact" aria-label="Academic projects">
-            <li>Thesis: ACES LMS</li><li>Kabisado</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <!-- ===== Contact ===== -->
-    <section id="contact" class="section" aria-labelledby="contact-title">
-      <div class="container">
-        <h2 class="section__title reveal" id="contact-title">Contact</h2>
-        <p class="section__lead reveal">Hiring, or want to talk about a project? Send a message and I'll reply by email.</p>
-
-        <div class="contact">
-          <div class="contact__cards reveal">
-            <a class="contact-card" href="mailto:benchcanzana@gmail.com" aria-label="Send an email to benchcanzana@gmail.com">
-              <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="contact__content">
+          <div class="contact__cards stagger">
+            <a class="contact-card reveal-item" data-reveal="left" href="mailto:benchcanzana@gmail.com" aria-label="Send an email to benchcanzana@gmail.com">
+              <div class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
               <span class="contact-card__label">Email</span>
               <span class="contact-card__value">benchcanzana@gmail.com</span>
             </a>
-            <a class="contact-card" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile, github.com/Bread03566 (opens in a new tab)">
-              <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z"/></svg>
+
+            <a class="contact-card reveal-item" data-reveal="left" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Visit Bench Ivan Canzana's GitHub profile (opens in a new tab)">
+              <div class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                </svg>
+              </div>
               <span class="contact-card__label">GitHub</span>
               <span class="contact-card__value">github.com/Bread03566</span>
             </a>
           </div>
 
-          <form class="contact-form reveal" id="contact-form" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form" novalidate>
+          <form class="contact-form reveal-item" data-reveal="right" style="--i: 4" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form" novalidate>
             <div class="form-field">
               <label for="contact-name">Name</label>
-              <input type="text" id="contact-name" name="name" autocomplete="name" required aria-describedby="contact-name-error">
+              <input type="text" id="contact-name" name="name" autocomplete="name" placeholder="Your name" required aria-describedby="contact-name-error">
               <p class="form-field__error" id="contact-name-error" hidden></p>
             </div>
             <div class="form-field">
               <label for="contact-email">Email</label>
-              <input type="email" id="contact-email" name="email" autocomplete="email" required aria-describedby="contact-email-error">
+              <input type="email" id="contact-email" name="email" autocomplete="email" placeholder="you@example.com" required aria-describedby="contact-email-error">
               <p class="form-field__error" id="contact-email-error" hidden></p>
             </div>
             <div class="form-field">
               <label for="contact-message">Message</label>
-              <textarea id="contact-message" name="message" rows="5" required minlength="10" aria-describedby="contact-message-error"></textarea>
+              <textarea id="contact-message" name="message" rows="5" placeholder="What would you like to talk about?" required aria-describedby="contact-message-error"></textarea>
               <p class="form-field__error" id="contact-message-error" hidden></p>
             </div>
             <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <button type="submit" class="btn btn--primary btn--block">Send message</button>
+            <button type="submit" class="btn btn--primary btn--block">Send Message</button>
             <p class="form-status" id="form-status" role="status" aria-live="polite" hidden></p>
           </form>
         </div>
+      </section>
+
+      <dialog class="aces-dialog" id="aces-dialog" aria-labelledby="aces-dialog-title">
+        <div class="aces-dialog__head">
+          <h2 class="aces-dialog__title" id="aces-dialog-title">ACES LMS portals</h2>
+          <button type="button" class="aces-dialog__close" id="aces-close" aria-label="Close demo">&times;</button>
+        </div>
+
+        <div class="aces__tabs" role="tablist" aria-label="ACES LMS portals">
+          <button type="button" role="tab" id="aces-tab-demo" class="aces__tab is-active" aria-selected="true" aria-controls="aces-panel" tabindex="0"
+            data-video="./assets/aces-demo.mp4"
+            data-caption="A short walkthrough of ACES LMS.">Demo video</button>
+          <button type="button" role="tab" id="aces-tab-student" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-student.jpg"
+            data-alt="ACES LMS student dashboard showing a calendar, to-do list, and course list"
+            data-caption="Students read lessons, take quizzes, submit activities, and see every assignment in one list.">Student</button>
+          <button type="button" role="tab" id="aces-tab-teacher" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-teacher.jpg"
+            data-alt="ACES LMS teacher dashboard with courses, assignments, resources, gradebook, and submitted grades in the sidebar"
+            data-caption="Teachers build lessons and quizzes, grade submissions, and send grades to the admin for approval.">Teacher</button>
+          <button type="button" role="tab" id="aces-tab-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-admin.jpg"
+            data-alt="ACES LMS admin dashboard with an overview of programs, sections, students, and enrollment charts"
+            data-caption="Admins set up programs, sections, and teaching loads, and approve submitted grades.">Admin</button>
+          <button type="button" role="tab" id="aces-tab-system-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-system-admin.jpg"
+            data-alt="ACES LMS system administrator dashboard with a system overview of users, programs, sections, and subjects"
+            data-caption="System admins manage accounts, the audit log, system settings, system health, and AI usage.">System Admin</button>
+        </div>
+
+        <div class="aces__viewer" id="aces-panel" role="tabpanel" aria-labelledby="aces-tab-demo">
+          <video id="aces-video" controls playsinline preload="metadata" src="./assets/aces-demo.mp4">
+            Your browser does not support embedded video.
+          </video>
+          <img id="aces-image" src="./assets/aces-student.jpg" alt="ACES LMS student dashboard showing a calendar, to-do list, and course list" hidden>
+        </div>
+        <p class="aces__caption" id="aces-caption">A short walkthrough of ACES LMS.</p>
+
+        <dl class="detail">
+          <div class="detail__row">
+            <dt>Problem it solves</dt>
+            <dd>A college needs one system where students, teachers, and administrators each get the tools for their own job: lessons and quizzes, grading and approval, and school setup.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>My role</dt>
+            <dd>Developer on our thesis team, working across the full stack.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>Key features</dt>
+            <dd>
+              <ul class="detail__list">
+                <li>Four portals: student, teacher, admin, and system admin</li>
+                <li>Lessons, quizzes, and activity submissions</li>
+                <li>Gradebook with an admin approval step before grades are final</li>
+                <li>Programs, sections, and teaching-load setup</li>
+                <li>Audit log, system health, and AI usage tracking for system admins</li>
+                <li>Session authentication with email OTP</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="detail__row">
+            <dt>Built with</dt>
+            <dd>React 19, React Router, Vite, Tailwind CSS, Laravel 12, MySQL, Docker, Cloudflare R2, PHPUnit, Vitest</dd>
+          </div>
+        </dl>
+      </dialog>
+
+      <dialog class="aces-dialog" id="dialog-kabisado" aria-labelledby="dialog-kabisado-title">
+        <div class="aces-dialog__head">
+          <h2 class="aces-dialog__title" id="dialog-kabisado-title">Kabisado</h2>
+          <button type="button" class="aces-dialog__close" data-dialog-close aria-label="Close details">&times;</button>
+        </div>
+        <dl class="detail">
+          <div class="detail__row">
+            <dt>Overview</dt>
+            <dd>An AI study companion for students. Upload a handout and get summaries, flashcards, and quizzes with instant feedback.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>Problem it solves</dt>
+            <dd>Turning a long handout into something you can actually study from takes time. Kabisado does the first pass for you.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>My role</dt>
+            <dd>Designed and built the app.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>Key features</dt>
+            <dd>
+              <ul class="detail__list">
+                <li>Handout upload</li>
+                <li>AI-generated summaries</li>
+                <li>Flashcards</li>
+                <li>Quizzes with instant feedback</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="detail__row">
+            <dt>Built with</dt>
+            <dd>Python, FastAPI, SQLAlchemy, SQLite, React, Google Gemini API, pytest</dd>
+          </div>
+        </dl>
+      </dialog>
+
+      <dialog class="aces-dialog" id="dialog-portfolio" aria-labelledby="dialog-portfolio-title">
+        <div class="aces-dialog__head">
+          <h2 class="aces-dialog__title" id="dialog-portfolio-title">This Portfolio</h2>
+          <button type="button" class="aces-dialog__close" data-dialog-close aria-label="Close details">&times;</button>
+        </div>
+        <dl class="detail">
+          <div class="detail__row">
+            <dt>Overview</dt>
+            <dd>A responsive site built by hand with plain HTML, CSS, and JavaScript. No frameworks, hosted on GitHub Pages.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>Problem it solves</dt>
+            <dd>Gives recruiters and teammates one place to see my projects, skills, and contact details.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>My role</dt>
+            <dd>Designed and built everything.</dd>
+          </div>
+          <div class="detail__row">
+            <dt>Key features</dt>
+            <dd>
+              <ul class="detail__list">
+                <li>Light and dark themes</li>
+                <li>Scroll animations that respect reduced-motion settings</li>
+                <li>Project dialogs with a demo video and screenshots</li>
+                <li>Contact form with validation, sent through Formspree</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="detail__row">
+            <dt>Built with</dt>
+            <dd>HTML, CSS, JavaScript, GitHub Pages</dd>
+          </div>
+        </dl>
+      </dialog>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__content">
+        <p class="site-footer__copyright">&copy; <span id="current-year">2026</span> Bench Ivan Canzana. All rights reserved.</p>
+
+        <ul class="site-footer__links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="site-footer__social">
+          <a href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Bench Ivan Canzana on GitHub (opens in a new tab)">
+            <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
       </div>
-    </section>
+    </footer>
 
-  </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__inner">
-      <p>&copy; <span id="current-year">2026</span> Bench Ivan Canzana. All rights reserved.</p>
-      <ul class="site-footer__links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#education">Education</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="GitHub (opens in a new tab)">GitHub</a></li>
-      </ul>
-    </div>
-  </footer>
+  </div>
 
   <button type="button" class="to-top" id="to-top" aria-label="Back to top" hidden>
-    <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </button>
-
-  <!-- ===== Project dialogs ===== -->
-  <dialog class="dialog" id="dialog-aces" aria-labelledby="dialog-aces-title">
-    <div class="dialog__head">
-      <h2 class="dialog__title" id="dialog-aces-title">ACES LMS</h2>
-      <button type="button" class="dialog__close" data-dialog-close aria-label="Close project details">&times;</button>
-    </div>
-
-    <div class="dialog__body">
-      <div class="aces__tabs" role="tablist" aria-label="ACES LMS demo and portals">
-        <button type="button" role="tab" id="aces-tab-demo" class="aces__tab is-active" aria-selected="true" aria-controls="aces-panel" tabindex="0"
-          data-video="./assets/aces-demo.mp4"
-          data-caption="A short walkthrough of ACES LMS.">Demo video</button>
-        <button type="button" role="tab" id="aces-tab-student" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-          data-src="./assets/aces-student.jpg"
-          data-alt="ACES LMS student dashboard showing a calendar, to-do list, and course list"
-          data-caption="Students read lessons, take quizzes, submit activities, and see every assignment in one list.">Student</button>
-        <button type="button" role="tab" id="aces-tab-teacher" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-          data-src="./assets/aces-teacher.jpg"
-          data-alt="ACES LMS teacher dashboard with courses, assignments, resources, gradebook, and submitted grades in the sidebar"
-          data-caption="Teachers build lessons and quizzes, grade submissions, and send grades to the admin for approval.">Teacher</button>
-        <button type="button" role="tab" id="aces-tab-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-          data-src="./assets/aces-admin.jpg"
-          data-alt="ACES LMS admin dashboard with an overview of programs, sections, students, and enrollment charts"
-          data-caption="Admins set up programs, sections, and teaching loads, and approve submitted grades.">Admin</button>
-        <button type="button" role="tab" id="aces-tab-system-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-          data-src="./assets/aces-system-admin.jpg"
-          data-alt="ACES LMS system administrator dashboard with a system overview of users, programs, sections, and subjects"
-          data-caption="System admins manage accounts, the audit log, system settings, system health, and AI usage.">System admin</button>
-      </div>
-
-      <div class="aces__viewer" id="aces-panel" role="tabpanel" aria-labelledby="aces-tab-demo">
-        <video id="aces-video" controls playsinline preload="none" poster="./assets/aces-student.jpg" src="./assets/aces-demo.mp4">
-          Your browser does not support embedded video.
-        </video>
-        <img id="aces-image" src="./assets/aces-student.jpg" alt="ACES LMS student dashboard showing a calendar, to-do list, and course list" hidden>
-      </div>
-      <p class="aces__caption" id="aces-caption">A short walkthrough of ACES LMS.</p>
-
-      <dl class="detail">
-        <div class="detail__row">
-          <dt>Problem it solves</dt>
-          <dd>A college needs one system where students, teachers, and administrators each get the tools for their own job: lessons and quizzes, grading and approval, and school setup.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>My role</dt>
-          <dd>Developer on our thesis team, working across the full stack.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>Key features</dt>
-          <dd>
-            <ul class="detail__list">
-              <li>Four portals: student, teacher, admin, and system admin</li>
-              <li>Lessons, quizzes, and activity submissions</li>
-              <li>Gradebook with an admin approval step before grades are final</li>
-              <li>Programs, sections, and teaching-load setup</li>
-              <li>Audit log, system health, and AI usage tracking for system admins</li>
-              <li>Session authentication with email OTP</li>
-            </ul>
-          </dd>
-        </div>
-        <div class="detail__row">
-          <dt>Built with</dt>
-          <dd>
-            <ul class="tags tags--compact">
-              <li>React 19</li><li>React Router</li><li>Vite</li><li>Tailwind CSS</li><li>Laravel 12</li><li>MySQL</li><li>Docker</li><li>Cloudflare R2</li><li>PHPUnit</li><li>Vitest</li>
-            </ul>
-          </dd>
-        </div>
-      </dl>
-
-      <div class="actions dialog__actions">
-        <a class="btn btn--primary" href="https://aces.lms-edu.app" target="_blank" rel="noopener noreferrer" aria-label="Visit the ACES LMS live site (opens in a new tab)">Visit live site</a>
-      </div>
-    </div>
-  </dialog>
-
-  <dialog class="dialog" id="dialog-kabisado" aria-labelledby="dialog-kabisado-title">
-    <div class="dialog__head">
-      <h2 class="dialog__title" id="dialog-kabisado-title">Kabisado</h2>
-      <button type="button" class="dialog__close" data-dialog-close aria-label="Close project details">&times;</button>
-    </div>
-    <div class="dialog__body">
-      <dl class="detail">
-        <div class="detail__row">
-          <dt>Overview</dt>
-          <dd>An AI study companion for students. Upload a handout and get summaries, flashcards, and quizzes with instant feedback.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>Problem it solves</dt>
-          <dd>Turning a long handout into something you can actually study from takes time. Kabisado does the first pass for you.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>My role</dt>
-          <dd>Designed and built the app.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>Key features</dt>
-          <dd>
-            <ul class="detail__list">
-              <li>Handout upload</li>
-              <li>AI-generated summaries</li>
-              <li>Flashcards</li>
-              <li>Quizzes with instant feedback</li>
-            </ul>
-          </dd>
-        </div>
-        <div class="detail__row">
-          <dt>Built with</dt>
-          <dd>
-            <ul class="tags tags--compact">
-              <li>Python</li><li>FastAPI</li><li>SQLAlchemy</li><li>SQLite</li><li>React</li><li>Google Gemini API</li><li>pytest</li>
-            </ul>
-          </dd>
-        </div>
-      </dl>
-    </div>
-  </dialog>
-
-  <dialog class="dialog" id="dialog-portfolio" aria-labelledby="dialog-portfolio-title">
-    <div class="dialog__head">
-      <h2 class="dialog__title" id="dialog-portfolio-title">This portfolio</h2>
-      <button type="button" class="dialog__close" data-dialog-close aria-label="Close project details">&times;</button>
-    </div>
-    <div class="dialog__body">
-      <dl class="detail">
-        <div class="detail__row">
-          <dt>Overview</dt>
-          <dd>A responsive site built by hand with plain HTML, CSS, and JavaScript. No frameworks, hosted on GitHub Pages.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>Problem it solves</dt>
-          <dd>Gives recruiters and teammates one place to see my projects, skills, and contact details.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>My role</dt>
-          <dd>Designed and built everything.</dd>
-        </div>
-        <div class="detail__row">
-          <dt>Key features</dt>
-          <dd>
-            <ul class="detail__list">
-              <li>Light and dark themes that follow your system setting</li>
-              <li>Project detail dialogs with a demo video and screenshots</li>
-              <li>Contact form with validation, sent through Formspree</li>
-              <li>Keyboard-friendly navigation and reduced-motion support</li>
-            </ul>
-          </dd>
-        </div>
-        <div class="detail__row">
-          <dt>Built with</dt>
-          <dd>
-            <ul class="tags tags--compact">
-              <li>HTML</li><li>CSS</li><li>JavaScript</li><li>GitHub Pages</li>
-            </ul>
-          </dd>
-        </div>
-      </dl>
-      <div class="actions dialog__actions">
-        <a class="btn btn--primary" href="https://github.com/Bread03566/Personal-Portfolio" target="_blank" rel="noopener noreferrer" aria-label="View the portfolio source code on GitHub (opens in a new tab)">View source code</a>
-      </div>
-    </div>
-  </dialog>
 
   <script src="./script.js?v=8"></script>
 </body>
