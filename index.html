@@ -38,8 +38,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <script>document.documentElement.classList.add('js');</script>
-  <link rel="stylesheet" href="./style.css?v=12">
+  <script>
+    document.documentElement.classList.add('js');
+    /* Failsafe: if the main script never starts, show all content instead of leaving it hidden. */
+    setTimeout(function () {
+      if (!window.__motionReady) document.documentElement.classList.remove('js');
+    }, 3000);
+  </script>
+  <link rel="stylesheet" href="./style.css?v=13">
 </head>
 <body>
 
@@ -464,6 +470,6 @@
     </svg>
   </button>
 
-  <script src="./script.js?v=12"></script>
+  <script src="./script.js?v=13"></script>
 </body>
 </html>

@@ -521,6 +521,7 @@ const initMotionPolish = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  window.__motionReady = true;
   initMotionPolish();
   initSidebarToggle();
   initThemeToggle();
