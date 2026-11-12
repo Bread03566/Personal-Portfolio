@@ -1,116 +1,72 @@
 /**
- * Sidebar navigation: hamburger toggle (mobile/tablet), backdrop, Escape key,
- * and closing on link click.
+ * Mobile navigation: toggle button, Escape key, and closing on link click.
  */
-const initSidebarToggle = () => {
-  const navToggle = document.getElementById('nav-toggle');
-  const sidebar = document.getElementById('sidebar');
-  const backdrop = document.getElementById('sidebar-backdrop');
+const initNavToggle = () => {
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('site-nav');
+  if (!toggle || !nav) return;
 
-  if (!navToggle || !sidebar || !backdrop) return;
-
-  const closeSidebar = () => {
-    sidebar.classList.remove('is-open');
-    backdrop.classList.remove('is-open');
-    backdrop.hidden = true;
-    navToggle.setAttribute('aria-expanded', 'false');
+  const setOpen = (open) => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
   };
 
-  const openSidebar = () => {
-    sidebar.classList.add('is-open');
-    backdrop.hidden = false;
-    requestAnimationFrame(() => backdrop.classList.add('is-open'));
-    navToggle.setAttribute('aria-expanded', 'true');
-  };
-
-  const toggleSidebar = () => {
-    if (sidebar.classList.contains('is-open')) {
-      closeSidebar();
-    } else {
-      openSidebar();
-    }
-  };
-
-  navToggle.addEventListener('click', toggleSidebar);
-  backdrop.addEventListener('click', closeSidebar);
-
-  sidebar.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', closeSidebar);
-  });
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeSidebar();
+    if (event.key === 'Escape' && nav.classList.contains('is-open')) {
+      setOpen(false);
+      toggle.focus();
+    }
   });
 
   window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024) closeSidebar();
+    if (window.innerWidth >= 1024) setOpen(false);
   });
 };
 
 /**
- * Light/Dark theme toggle, persisted in localStorage.
- * Keeps the mobile topbar button and the desktop sidebar button in sync.
+ * Light/dark theme toggle, persisted in localStorage.
+ * The saved theme is applied by an inline script in <head> before first paint.
  */
 const initThemeToggle = () => {
   const THEME_KEY = 'portfolio-theme';
   const rootEl = document.documentElement;
-  const toggles = [
-    document.getElementById('theme-toggle'),
-    document.getElementById('theme-toggle-desktop'),
-  ].filter(Boolean);
-  const desktopLabel = document.getElementById('theme-toggle-label');
-
-  if (toggles.length === 0) return;
+  const toggle = document.getElementById('theme-toggle');
+  if (!toggle) return;
 
   const applyTheme = (theme) => {
+    const isDark = theme === 'dark';
     rootEl.setAttribute('data-theme', theme);
-    const isLight = theme === 'light';
-
-    toggles.forEach((toggle) => {
-      toggle.setAttribute('aria-pressed', String(isLight));
-      toggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
-    });
-
-    if (desktopLabel) desktopLabel.textContent = isLight ? 'Light mode' : 'Dark mode';
+    toggle.setAttribute('aria-pressed', String(isDark));
+    toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
   };
 
-  const storedTheme = localStorage.getItem(THEME_KEY);
-  applyTheme(storedTheme === 'light' ? 'light' : 'dark');
+  applyTheme(rootEl.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
 
-  toggles.forEach((toggle) => {
-    toggle.addEventListener('click', () => {
-      const nextTheme = rootEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      applyTheme(nextTheme);
-
-      try {
-        localStorage.setItem(THEME_KEY, nextTheme);
-      } catch (error) {
-        /* localStorage unavailable; theme still applies for this session */
-      }
-    });
+  toggle.addEventListener('click', () => {
+    const next = rootEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch (error) {
+      /* localStorage unavailable; the theme still applies for this session */
+    }
   });
 };
 
 /**
- * Highlights the sidebar link for the section currently in view.
+ * Marks the nav link for the section currently in view.
  */
 const initScrollSpy = () => {
   const sections = document.querySelectorAll('main section[id]');
   const navLinks = document.querySelectorAll('[data-nav-link]');
-
   if (sections.length === 0 || navLinks.length === 0 || !('IntersectionObserver' in window)) return;
 
-  const linksBySectionId = new Map();
-  navLinks.forEach((link) => {
-    const id = link.getAttribute('href').replace('#', '');
-    linksBySectionId.set(id, link);
-  });
-
-  const setActive = (id) => {
-    navLinks.forEach((link) => link.classList.remove('is-active'));
-    const activeLink = linksBySectionId.get(id);
-    if (activeLink) activeLink.classList.add('is-active');
-  };
+  const linksById = new Map();
+  navLinks.forEach((link) => linksById.set(link.getAttribute('href').slice(1), link));
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -118,37 +74,20 @@ const initScrollSpy = () => {
       if (visible.length === 0) return;
 
       const topMost = visible.reduce((a, b) => (a.boundingClientRect.top < b.boundingClientRect.top ? a : b));
-      setActive(topMost.target.id);
+      navLinks.forEach((link) => {
+        link.classList.remove('is-active');
+        link.removeAttribute('aria-current');
+      });
+      const active = linksById.get(topMost.target.id);
+      if (active) {
+        active.classList.add('is-active');
+        active.setAttribute('aria-current', 'true');
+      }
     },
     { rootMargin: '-40% 0px -50% 0px' }
   );
 
   sections.forEach((section) => observer.observe(section));
-};
-
-/**
- * Fades/slides elements in as they scroll into view.
- * Runs once per element, then stops observing it.
- */
-const initScrollReveal = () => {
-  const revealEls = document.querySelectorAll('.reveal');
-  if (revealEls.length === 0 || !('IntersectionObserver' in window)) {
-    revealEls.forEach((el) => el.classList.add('is-visible'));
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        obs.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
-  );
-
-  revealEls.forEach((el) => observer.observe(el));
 };
 
 /**
@@ -160,21 +99,26 @@ const initFooterYear = () => {
 };
 
 /**
- * Submits the contact form to Formspree via fetch, so a successful send
- * stays on the page instead of redirecting to Formspree's own page.
+ * Submits the contact form to Formspree via fetch so a successful send
+ * stays on the page, and reports the result in a live status message.
  */
 const initContactForm = () => {
   const form = document.querySelector('.contact-form');
-  if (!form) return;
+  const status = document.getElementById('form-status');
+  if (!form || !status) return;
+
+  const showStatus = (message, isError) => {
+    status.textContent = message;
+    status.classList.toggle('is-error', isError);
+  };
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const submitButton = form.querySelector('button[type="submit"]');
     if (!submitButton) return;
 
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'Sending...';
     submitButton.disabled = true;
+    showStatus('Sending...', false);
 
     try {
       const response = await fetch(form.action, {
@@ -183,24 +127,24 @@ const initContactForm = () => {
         headers: { Accept: 'application/json' },
       });
 
-      submitButton.textContent = response.ok ? 'Message Sent!' : 'Something went wrong';
-      if (response.ok) form.reset();
+      if (response.ok) {
+        form.reset();
+        showStatus('Message sent. I will reply by email soon.', false);
+      } else {
+        showStatus('The message did not send. Try again, or email me directly.', true);
+      }
     } catch (error) {
-      submitButton.textContent = 'Something went wrong';
+      showStatus('The message did not send. Check your connection and try again.', true);
     }
 
-    setTimeout(() => {
-      submitButton.textContent = originalText;
-      submitButton.disabled = false;
-    }, 2500);
+    submitButton.disabled = false;
   });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  initSidebarToggle();
+  initNavToggle();
   initThemeToggle();
   initScrollSpy();
-  initScrollReveal();
   initFooterYear();
   initContactForm();
 });
