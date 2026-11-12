@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script>document.documentElement.classList.add('js');</script>
-  <link rel="stylesheet" href="./style.css?v=6">
+  <link rel="stylesheet" href="./style.css?v=7">
 </head>
 <body>
 
@@ -220,7 +220,7 @@
             <h3 class="project-card__title">ACES LMS</h3>
             <p class="project-card__desc">Our thesis project: a learning management system for a college, with a separate portal for each role. Built with React, Laravel, MySQL, and Docker.</p>
             <div class="project-card__actions">
-              <button type="button" class="btn btn--primary project-card__btn" id="aces-open" aria-haspopup="dialog">Screenshots</button>
+              <button type="button" class="btn btn--primary project-card__btn" id="aces-open" aria-haspopup="dialog">View demo</button>
               <a class="btn btn--secondary project-card__btn" href="https://aces.lms-edu.app" target="_blank" rel="noopener noreferrer" aria-label="Visit the ACES LMS live site (opens in a new tab)">Live site &#8599;</a>
             </div>
           </article>
@@ -302,11 +302,14 @@
       <dialog class="aces-dialog" id="aces-dialog" aria-labelledby="aces-dialog-title">
         <div class="aces-dialog__head">
           <h2 class="aces-dialog__title" id="aces-dialog-title">ACES LMS portals</h2>
-          <button type="button" class="aces-dialog__close" id="aces-close" aria-label="Close screenshots">&times;</button>
+          <button type="button" class="aces-dialog__close" id="aces-close" aria-label="Close demo">&times;</button>
         </div>
 
         <div class="aces__tabs" role="tablist" aria-label="ACES LMS portals">
-          <button type="button" role="tab" id="aces-tab-student" class="aces__tab is-active" aria-selected="true" aria-controls="aces-panel" tabindex="0"
+          <button type="button" role="tab" id="aces-tab-demo" class="aces__tab is-active" aria-selected="true" aria-controls="aces-panel" tabindex="0"
+            data-video="./assets/aces-demo.mp4"
+            data-caption="A short walkthrough of ACES LMS.">Demo video</button>
+          <button type="button" role="tab" id="aces-tab-student" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
             data-src="./assets/aces-student.jpg"
             data-alt="ACES LMS student dashboard showing a calendar, to-do list, and course list"
             data-caption="Students read lessons, take quizzes, submit activities, and see every assignment in one list.">Student</button>
@@ -324,10 +327,13 @@
             data-caption="System admins manage accounts, the audit log, system settings, system health, and AI usage.">System Admin</button>
         </div>
 
-        <div class="aces__viewer" id="aces-panel" role="tabpanel" aria-labelledby="aces-tab-student">
-          <img id="aces-image" src="./assets/aces-student.jpg" alt="ACES LMS student dashboard showing a calendar, to-do list, and course list">
+        <div class="aces__viewer" id="aces-panel" role="tabpanel" aria-labelledby="aces-tab-demo">
+          <video id="aces-video" controls playsinline preload="metadata" src="./assets/aces-demo.mp4">
+            Your browser does not support embedded video.
+          </video>
+          <img id="aces-image" src="./assets/aces-student.jpg" alt="ACES LMS student dashboard showing a calendar, to-do list, and course list" hidden>
         </div>
-        <p class="aces__caption" id="aces-caption">Students read lessons, take quizzes, submit activities, and see every assignment in one list.</p>
+        <p class="aces__caption" id="aces-caption">A short walkthrough of ACES LMS.</p>
       </dialog>
 
     </main>
@@ -356,6 +362,6 @@
 
   </div>
 
-  <script src="./script.js?v=6"></script>
+  <script src="./script.js?v=7"></script>
 </body>
 </html>

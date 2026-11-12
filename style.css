@@ -1118,3 +1118,15 @@ textarea {
   color: var(--color-text-muted);
   font-size: var(--fs-sm);
 }
+
+.aces__viewer video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  background-color: #000;
+}
+
+.aces__viewer [hidden] {
+  display: none;
+}

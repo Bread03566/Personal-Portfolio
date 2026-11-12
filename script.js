@@ -297,6 +297,7 @@ const initAcesTabs = () => {
   const image = document.getElementById('aces-image');
   const caption = document.getElementById('aces-caption');
   const panel = document.getElementById('aces-panel');
+  const video = document.getElementById('aces-video');
   if (tabs.length === 0 || !image || !caption || !panel) return;
 
   const select = (tab, focus = false) => {
@@ -306,8 +307,16 @@ const initAcesTabs = () => {
       item.setAttribute('aria-selected', String(active));
       item.tabIndex = active ? 0 : -1;
     });
-    image.src = tab.dataset.src;
-    image.alt = tab.dataset.alt;
+    const showVideo = Boolean(tab.dataset.video) && Boolean(video);
+    if (video) {
+      video.hidden = !showVideo;
+      if (!showVideo) video.pause();
+    }
+    image.hidden = showVideo;
+    if (!showVideo) {
+      image.src = tab.dataset.src;
+      image.alt = tab.dataset.alt;
+    }
     caption.textContent = tab.dataset.caption;
     panel.setAttribute('aria-labelledby', tab.id);
     if (focus) tab.focus();
@@ -346,7 +355,11 @@ const initAcesDialog = () => {
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) dialog.close();
   });
-  dialog.addEventListener('close', () => openButton.focus());
+  dialog.addEventListener('close', () => {
+    const video = document.getElementById('aces-video');
+    if (video) video.pause();
+    openButton.focus();
+  });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
