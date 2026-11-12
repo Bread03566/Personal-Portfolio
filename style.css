@@ -1008,35 +1008,69 @@ textarea {
 }
 
 /* ==========================================================================
-   16. ACES Project Viewer (tabbed screenshots)
+   16. ACES Screenshot Dialog
    ========================================================================== */
-.aces {
+.project-card__actions {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+
+.project-card__btn {
+  padding: 0.5rem 1rem;
+  font-size: var(--fs-sm);
+}
+
+.aces-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(1000px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   padding: var(--space-md);
   background-color: var(--color-surface);
+  color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
 
-.aces__intro {
+.aces-dialog[open] {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: var(--space-sm);
 }
 
-.aces__title {
-  font-size: var(--fs-xl);
-  color: var(--color-text);
-  margin-bottom: var(--space-xs);
+.aces-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
-.aces__desc {
-  max-width: 62ch;
+.aces-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.aces-dialog__title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+}
+
+.aces-dialog__close {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  font-size: 1.75rem;
+  line-height: 1;
   color: var(--color-text-muted);
-  font-size: var(--fs-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.aces-dialog__close:hover {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text);
 }
 
 .aces__tabs {
@@ -1068,7 +1102,6 @@ textarea {
 }
 
 .aces__viewer {
-  aspect-ratio: 2 / 1;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -1076,26 +1109,12 @@ textarea {
 }
 
 .aces__viewer img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top left;
+  height: auto;
 }
 
 .aces__caption {
   color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  min-height: 3em;
-}
-
-@media (min-width: 1024px) {
-  .aces {
-    padding: var(--space-lg);
-  }
-}
-
-.aces__link {
-  margin-top: var(--space-sm);
-  padding: 0.5rem 1.1rem;
   font-size: var(--fs-sm);
 }

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bench Ivan Canzana | Aspiring Software Engineer</title>
+  <meta name="theme-color" content="#0a0a0a">
   <meta name="description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
 
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
@@ -24,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script>document.documentElement.classList.add('js');</script>
-  <link rel="stylesheet" href="./style.css?v=4">
+  <link rel="stylesheet" href="./style.css?v=6">
 </head>
 <body>
 
@@ -124,7 +125,7 @@
             <p>
               I'm a graduating student and aspiring Software Engineer who loves turning ideas into
               practical, working applications. I enjoy breaking problems into small pieces and
-              writing clean code in Python and JavaScript, with a background in data and machine learning.
+              writing clean code in Python and JavaScript. So far I have built a full-stack thesis system and an AI study app.
             </p>
             <p>
               I'm eager to join a team where I can learn, contribute, and ship real code from day one.
@@ -167,6 +168,9 @@
               <li>Laravel 12</li>
               <li>REST APIs</li>
               <li>MySQL</li>
+              <li>FastAPI</li>
+              <li>SQLAlchemy</li>
+              <li>SQLite</li>
               <li>Docker</li>
               <li>Session Auth &amp; Email OTP</li>
               <li>Cloudflare R2</li>
@@ -192,6 +196,7 @@
               <li>PHPUnit</li>
               <li>Vitest</li>
               <li>ESLint</li>
+              <li>pytest</li>
             </ul>
           </article>
         </div>
@@ -203,40 +208,23 @@
         </div>
         <hr class="rule reveal-item" data-reveal="line">
 
-        <article class="aces reveal-item" data-reveal="scale" aria-labelledby="aces-title">
-          <div class="aces__intro">
-            <span class="project-card__badge">Thesis</span>
-            <h3 class="aces__title" id="aces-title">ACES LMS</h3>
-            <p class="aces__desc">Our thesis project: a learning management system for a college, with a separate portal for each role. Built with React, Laravel, MySQL, and Docker.</p>
-            <a class="btn btn--secondary aces__link" href="https://aces.lms-edu.app" target="_blank" rel="noopener noreferrer" aria-label="Visit the ACES LMS live site (opens in a new tab)">Visit live site &#8599;</a>
-          </div>
-
-          <div class="aces__tabs" role="tablist" aria-label="ACES LMS portals">
-            <button type="button" role="tab" id="aces-tab-student" class="aces__tab is-active" aria-selected="true" aria-controls="aces-panel" tabindex="0"
-              data-src="./assets/aces-student.jpg"
-              data-alt="ACES LMS student dashboard showing a calendar, to-do list, and course list"
-              data-caption="Students read lessons, take quizzes, submit activities, and see every assignment in one list.">Student</button>
-            <button type="button" role="tab" id="aces-tab-teacher" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-              data-src="./assets/aces-teacher.jpg"
-              data-alt="ACES LMS teacher dashboard with courses, assignments, resources, gradebook, and submitted grades in the sidebar"
-              data-caption="Teachers build lessons and quizzes, grade submissions, and send grades to the admin for approval.">Teacher</button>
-            <button type="button" role="tab" id="aces-tab-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-              data-src="./assets/aces-admin.jpg"
-              data-alt="ACES LMS admin dashboard with an overview of programs, sections, students, and enrollment charts"
-              data-caption="Admins set up programs, sections, and teaching loads, and approve submitted grades.">Admin</button>
-            <button type="button" role="tab" id="aces-tab-system-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
-              data-src="./assets/aces-system-admin.jpg"
-              data-alt="ACES LMS system administrator dashboard with a system overview of users, programs, sections, and subjects"
-              data-caption="System admins manage accounts, the audit log, system settings, system health, and AI usage.">System Admin</button>
-          </div>
-
-          <div class="aces__viewer" id="aces-panel" role="tabpanel" aria-labelledby="aces-tab-student">
-            <img id="aces-image" src="./assets/aces-student.jpg" alt="ACES LMS student dashboard showing a calendar, to-do list, and course list" width="1200" height="526" loading="lazy">
-          </div>
-          <p class="aces__caption" id="aces-caption">Students read lessons, take quizzes, submit activities, and see every assignment in one list.</p>
-        </article>
-
         <div class="projects__grid stagger">
+          <article class="project-card reveal-item" data-reveal="scale">
+            <span class="project-card__badge">Thesis</span>
+            <div class="project-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="project-card__title">ACES LMS</h3>
+            <p class="project-card__desc">Our thesis project: a learning management system for a college, with a separate portal for each role. Built with React, Laravel, MySQL, and Docker.</p>
+            <div class="project-card__actions">
+              <button type="button" class="btn btn--primary project-card__btn" id="aces-open" aria-haspopup="dialog">Screenshots</button>
+              <a class="btn btn--secondary project-card__btn" href="https://aces.lms-edu.app" target="_blank" rel="noopener noreferrer" aria-label="Visit the ACES LMS live site (opens in a new tab)">Live site &#8599;</a>
+            </div>
+          </article>
+
           <article class="project-card reveal-item" data-reveal="scale">
             <span class="project-card__badge">Live</span>
             <div class="project-card__icon" aria-hidden="true">
@@ -250,15 +238,15 @@
           </article>
 
           <article class="project-card reveal-item" data-reveal="scale">
-            <span class="project-card__badge">In Progress</span>
+            <span class="project-card__badge">AI Project</span>
             <div class="project-card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
                 <path d="M3 9h18M8 4v5" stroke="currentColor" stroke-width="1.5"/>
               </svg>
             </div>
-            <h3 class="project-card__title">Project Coming Soon</h3>
-            <p class="project-card__desc">Project details coming soon. Check back for updates as this build progresses.</p>
+            <h3 class="project-card__title">Kabisado</h3>
+            <p class="project-card__desc">An AI study companion for students. Upload a handout and get summaries, flashcards, and quizzes with instant feedback. Built with Python (FastAPI), React, and SQLite, using the Gemini API.</p>
           </article>
         </div>
       </section>
@@ -311,6 +299,37 @@
         </div>
       </section>
 
+      <dialog class="aces-dialog" id="aces-dialog" aria-labelledby="aces-dialog-title">
+        <div class="aces-dialog__head">
+          <h2 class="aces-dialog__title" id="aces-dialog-title">ACES LMS portals</h2>
+          <button type="button" class="aces-dialog__close" id="aces-close" aria-label="Close screenshots">&times;</button>
+        </div>
+
+        <div class="aces__tabs" role="tablist" aria-label="ACES LMS portals">
+          <button type="button" role="tab" id="aces-tab-student" class="aces__tab is-active" aria-selected="true" aria-controls="aces-panel" tabindex="0"
+            data-src="./assets/aces-student.jpg"
+            data-alt="ACES LMS student dashboard showing a calendar, to-do list, and course list"
+            data-caption="Students read lessons, take quizzes, submit activities, and see every assignment in one list.">Student</button>
+          <button type="button" role="tab" id="aces-tab-teacher" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-teacher.jpg"
+            data-alt="ACES LMS teacher dashboard with courses, assignments, resources, gradebook, and submitted grades in the sidebar"
+            data-caption="Teachers build lessons and quizzes, grade submissions, and send grades to the admin for approval.">Teacher</button>
+          <button type="button" role="tab" id="aces-tab-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-admin.jpg"
+            data-alt="ACES LMS admin dashboard with an overview of programs, sections, students, and enrollment charts"
+            data-caption="Admins set up programs, sections, and teaching loads, and approve submitted grades.">Admin</button>
+          <button type="button" role="tab" id="aces-tab-system-admin" class="aces__tab" aria-selected="false" aria-controls="aces-panel" tabindex="-1"
+            data-src="./assets/aces-system-admin.jpg"
+            data-alt="ACES LMS system administrator dashboard with a system overview of users, programs, sections, and subjects"
+            data-caption="System admins manage accounts, the audit log, system settings, system health, and AI usage.">System Admin</button>
+        </div>
+
+        <div class="aces__viewer" id="aces-panel" role="tabpanel" aria-labelledby="aces-tab-student">
+          <img id="aces-image" src="./assets/aces-student.jpg" alt="ACES LMS student dashboard showing a calendar, to-do list, and course list">
+        </div>
+        <p class="aces__caption" id="aces-caption">Students read lessons, take quizzes, submit activities, and see every assignment in one list.</p>
+      </dialog>
+
     </main>
 
     <footer class="site-footer">
@@ -337,6 +356,6 @@
 
   </div>
 
-  <script src="./script.js?v=4"></script>
+  <script src="./script.js?v=6"></script>
 </body>
 </html>

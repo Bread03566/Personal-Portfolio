@@ -330,6 +330,25 @@ const initAcesTabs = () => {
   });
 };
 
+
+/**
+ * Opens and closes the ACES screenshot dialog (native <dialog>).
+ * Closes on the X button, Escape (built in), or a click on the backdrop.
+ */
+const initAcesDialog = () => {
+  const dialog = document.getElementById('aces-dialog');
+  const openButton = document.getElementById('aces-open');
+  const closeButton = document.getElementById('aces-close');
+  if (!dialog || !openButton || !closeButton || typeof dialog.showModal !== 'function') return;
+
+  openButton.addEventListener('click', () => dialog.showModal());
+  closeButton.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('close', () => openButton.focus());
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initThemeToggle();
@@ -339,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollEffects();
   initCardSpotlight();
   initAcesTabs();
+  initAcesDialog();
   initFooterYear();
   initContactForm();
 });
