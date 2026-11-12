@@ -107,10 +107,34 @@ const initScrollSpy = () => {
   });
 
   const setActive = (id) => {
-    navLinks.forEach((link) => link.classList.remove('is-active'));
+    navLinks.forEach((link) => {
+      link.classList.remove('is-active');
+      link.removeAttribute('aria-current');
+    });
     const activeLink = linksBySectionId.get(id);
-    if (activeLink) activeLink.classList.add('is-active');
+    if (activeLink) {
+      activeLink.classList.add('is-active');
+      activeLink.setAttribute('aria-current', 'location');
+    }
   };
+
+  /* A short last section may never reach the observer's trigger band,
+     so pin it as active once the page is scrolled to the bottom. */
+  const lastId = sections[sections.length - 1].id;
+  let bottomTicking = false;
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (bottomTicking) return;
+      bottomTicking = true;
+      requestAnimationFrame(() => {
+        bottomTicking = false;
+        const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+        if (atBottom) setActive(lastId);
+      });
+    },
+    { passive: true }
+  );
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -145,10 +169,77 @@ const initScrollReveal = () => {
         obs.unobserve(entry.target);
       });
     },
-    { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    { threshold: 0.08, rootMargin: '0px 0px -8% 0px' }
   );
 
   revealEls.forEach((el) => observer.observe(el));
+};
+
+/**
+ * Gives children of `.stagger` containers an index (--i) that CSS turns
+ * into a staggered transition delay. Offset by 2 so they follow the
+ * section heading and rule.
+ */
+const initStagger = () => {
+  document.querySelectorAll('.stagger').forEach((group) => {
+    Array.from(group.children).forEach((child, index) => {
+      child.style.setProperty('--i', String(index + 2));
+    });
+  });
+};
+
+/**
+ * Scroll-linked effects, batched into one requestAnimationFrame per frame:
+ *  - top scroll progress bar
+ *  - subtle parallax on decorative background orbs
+ *  - active nav link pinned to the last section when at the page bottom
+ */
+const initScrollEffects = () => {
+  const bar = document.getElementById('scroll-progress-bar');
+  const orbs = Array.from(document.querySelectorAll('[data-parallax]'));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
+
+    if (bar) bar.style.transform = `scaleX(${progress})`;
+
+    if (!reduceMotion) {
+      orbs.forEach((orb) => {
+        const speed = Number(orb.dataset.parallax) || 0;
+        orb.style.transform = `translate3d(0, ${(scrollY * speed).toFixed(1)}px, 0)`;
+      });
+    }
+  };
+
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+};
+
+/**
+ * Cursor-follow spotlight on project cards (fine pointers only).
+ */
+const initCardSpotlight = () => {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  document.querySelectorAll('.project-card').forEach((card) => {
+    card.addEventListener('pointermove', (event) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+    });
+  });
 };
 
 /**
@@ -200,7 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initThemeToggle();
   initScrollSpy();
+  initStagger();
   initScrollReveal();
+  initScrollEffects();
+  initCardSpotlight();
   initFooterYear();
   initContactForm();
 });

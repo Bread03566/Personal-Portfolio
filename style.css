@@ -11,6 +11,8 @@
   --color-text-muted: #8a8a8a;
   --color-inverse-bg: #f5f5f5;
   --color-inverse-text: #0a0a0a;
+  --color-glow: rgba(255, 255, 255, 0.05);
+  --color-glow-strong: rgba(255, 255, 255, 0.09);
 
   /* Typography */
   --font-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -50,6 +52,8 @@
   --color-text-muted: #6b6b6b;
   --color-inverse-bg: #0a0a0a;
   --color-inverse-text: #ffffff;
+  --color-glow: rgba(0, 0, 0, 0.045);
+  --color-glow-strong: rgba(0, 0, 0, 0.07);
 }
 
 /* ==========================================================================
@@ -65,6 +69,19 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--topbar-height) + var(--space-sm));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: var(--space-sm);
+  }
 }
 
 body {
@@ -413,6 +430,7 @@ textarea {
    ========================================================================== */
 .content {
   padding-top: calc(var(--topbar-height) + var(--space-xl));
+  overflow-x: clip; /* off-screen slide-in elements must never cause horizontal scroll */
 }
 
 .hero,
@@ -733,34 +751,179 @@ textarea {
 /* ==========================================================================
    13. Scroll Reveal Animations
    ========================================================================== */
+/* Scroll progress bar + parallax background (decorative) */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 400;
+  pointer-events: none;
+}
+
+.scroll-progress__bar {
+  display: block;
+  height: 100%;
+  background-color: var(--color-text);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.bg-parallax {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-parallax__orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-glow) 0%, transparent 65%);
+  will-change: transform;
+}
+
+.bg-parallax__orb--a {
+  width: 520px;
+  height: 520px;
+  top: 5%;
+  right: -180px;
+}
+
+.bg-parallax__orb--b {
+  width: 420px;
+  height: 420px;
+  bottom: -120px;
+  left: 10%;
+}
+
+/* Reveal-on-scroll: only hidden when JS is running and motion is allowed.
+   Uses the individual `translate` / `scale` properties so the hover
+   `transform` on cards never conflicts with the entrance animation. */
 @media (prefers-reduced-motion: no-preference) {
-  .reveal {
+  .js .reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 700ms ease, transform 700ms ease;
+    transition: opacity 600ms ease;
   }
 
-  .reveal.is-visible {
+  .js .reveal.is-visible {
     opacity: 1;
-    transform: translateY(0);
   }
 
-  .reveal-item {
+  .js .reveal-item {
     opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 500ms ease, transform 500ms ease;
+    translate: 0 24px;
+    transition:
+      opacity 650ms cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * 90ms),
+      translate 650ms cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * 90ms),
+      scale 650ms cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * 90ms),
+      transform var(--transition-fast),
+      filter 500ms ease,
+      border-color var(--transition-fast);
   }
 
-  .reveal.is-visible .reveal-item {
+  .js .reveal-item[data-reveal="left"] { translate: -32px 0; }
+  .js .reveal-item[data-reveal="right"] { translate: 32px 0; }
+  .js .reveal-item[data-reveal="scale"] { translate: 0 16px; scale: 0.94; }
+  .js .reveal-item[data-reveal="line"] { translate: 0 0; scale: 0 1; transform-origin: left center; }
+
+  .js .reveal.is-visible .reveal-item {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
+    scale: 1;
   }
 
-  .stagger > *:nth-child(1) { transition-delay: 0ms; }
-  .stagger > *:nth-child(2) { transition-delay: 90ms; }
-  .stagger > *:nth-child(3) { transition-delay: 180ms; }
-  .stagger > *:nth-child(4) { transition-delay: 270ms; }
-  .stagger > *:nth-child(5) { transition-delay: 360ms; }
+  .rule.reveal-item { --i: 1; }
+
+  /* Hero entrance on page load */
+  .js .hero > * {
+    animation: hero-in 800ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 110ms + 100ms);
+  }
+
+  .hero > :nth-child(1) { --i: 0; }
+  .hero > :nth-child(2) { --i: 1; }
+  .hero > :nth-child(3) { --i: 2; }
+  .hero > :nth-child(4) { --i: 3; }
+  .hero > :nth-child(5) { --i: 4; }
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      translate: 0 28px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+}
+
+/* ==========================================================================
+   13b. Interactive Polish
+   ========================================================================== */
+.about__photo {
+  transition: filter 500ms ease, transform 500ms ease, border-color var(--transition-base);
+}
+
+.about__photo:hover {
+  filter: grayscale(0);
+  transform: scale(1.04);
+  border-color: var(--color-text);
+}
+
+.sidebar__link {
+  position: relative;
+}
+
+.sidebar__link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  background-color: var(--color-text);
+  transform: scaleY(0);
+  transition: transform var(--transition-base);
+}
+
+.sidebar__link.is-active::before {
+  transform: scaleY(1);
+}
+
+.project-card {
+  overflow: hidden;
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--color-glow-strong), transparent 70%);
+  transition: opacity var(--transition-base);
+}
+
+.project-card:hover::before {
+  opacity: 1;
+}
+
+.project-card__icon {
+  transition: color var(--transition-base), transform var(--transition-base);
+}
+
+.project-card:hover .project-card__icon {
+  color: var(--color-text);
+  transform: scale(1.1) rotate(-4deg);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* ==========================================================================

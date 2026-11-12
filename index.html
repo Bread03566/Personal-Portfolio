@@ -23,11 +23,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=3">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="./style.css?v=4">
 </head>
 <body>
 
   <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="scroll-progress" aria-hidden="true"><span class="scroll-progress__bar" id="scroll-progress-bar"></span></div>
+  <div class="bg-parallax" aria-hidden="true">
+    <span class="bg-parallax__orb bg-parallax__orb--a" data-parallax="0.12"></span>
+    <span class="bg-parallax__orb bg-parallax__orb--b" data-parallax="-0.08"></span>
+  </div>
 
   <div class="layout">
 
@@ -85,7 +92,7 @@
 
     <main id="main-content" class="content">
 
-      <section id="home" class="hero reveal" aria-label="Introduction">
+      <section id="home" class="hero" aria-label="Introduction">
         <p class="hero__eyebrow">Hello, I'm</p>
         <h1 class="hero__name">Bench Ivan Canzana</h1>
         <p class="hero__role">Aspiring Software Engineer</p>
@@ -97,21 +104,23 @@
       </section>
 
       <section id="about" class="section reveal">
-        <div class="section-head">
+        <div class="section-head reveal-item">
           <p class="section-head__label"><span class="section-head__index">01</span> &mdash; about</p>
         </div>
-        <hr class="rule">
+        <hr class="rule reveal-item" data-reveal="line">
 
         <div class="about__content">
           <img
-            class="about__photo"
+            class="about__photo reveal-item"
+            data-reveal="left"
+            style="--i: 2"
             src="./assets/profile.jpg"
             alt="Portrait photo of Bench Ivan Canzana"
             width="200"
             height="200"
             loading="lazy"
           >
-          <div class="about__text">
+          <div class="about__text reveal-item" data-reveal="right" style="--i: 3">
             <p>
               I'm a graduating student and aspiring Software Engineer who loves turning ideas into
               practical, working applications. I enjoy breaking problems into small pieces and
@@ -125,10 +134,10 @@
       </section>
 
       <section id="skills" class="section reveal">
-        <div class="section-head">
+        <div class="section-head reveal-item">
           <p class="section-head__label"><span class="section-head__index">02</span> &mdash; skills</p>
         </div>
-        <hr class="rule">
+        <hr class="rule reveal-item" data-reveal="line">
 
         <div class="skills__groups stagger">
           <article class="skill-group reveal-item">
@@ -189,13 +198,13 @@
       </section>
 
       <section id="projects" class="section reveal">
-        <div class="section-head">
+        <div class="section-head reveal-item">
           <p class="section-head__label"><span class="section-head__index">03</span> &mdash; projects</p>
         </div>
-        <hr class="rule">
+        <hr class="rule reveal-item" data-reveal="line">
 
         <div class="projects__grid stagger">
-          <article class="project-card reveal-item">
+          <article class="project-card reveal-item" data-reveal="scale">
             <span class="project-card__badge">Live</span>
             <div class="project-card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -207,7 +216,7 @@
             <p class="project-card__desc">A responsive site built by hand with plain HTML, CSS, and JavaScript. No frameworks, hosted on GitHub Pages.</p>
           </article>
 
-          <article class="project-card reveal-item">
+          <article class="project-card reveal-item" data-reveal="scale">
             <span class="project-card__badge">Thesis</span>
             <div class="project-card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -219,7 +228,7 @@
             <p class="project-card__desc">Our thesis project: a learning management system for a college, with separate portals for students, teachers, admins, and system admins. Built with React, Laravel, and MySQL.</p>
           </article>
 
-          <article class="project-card reveal-item">
+          <article class="project-card reveal-item" data-reveal="scale">
             <span class="project-card__badge">In Progress</span>
             <div class="project-card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -234,14 +243,14 @@
       </section>
 
       <section id="contact" class="section reveal">
-        <div class="section-head">
+        <div class="section-head reveal-item">
           <p class="section-head__label"><span class="section-head__index">04</span> &mdash; contact</p>
         </div>
-        <hr class="rule">
+        <hr class="rule reveal-item" data-reveal="line">
 
         <div class="contact__content">
           <div class="contact__cards stagger">
-            <a class="contact-card reveal-item" href="mailto:benchcanzana@gmail.com" aria-label="Send an email to benchcanzana@gmail.com">
+            <a class="contact-card reveal-item" data-reveal="left" href="mailto:benchcanzana@gmail.com" aria-label="Send an email to benchcanzana@gmail.com">
               <div class="contact-card__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
@@ -252,7 +261,7 @@
               <span class="contact-card__value">benchcanzana@gmail.com</span>
             </a>
 
-            <a class="contact-card reveal-item" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Visit Bench Ivan Canzana's GitHub profile (opens in a new tab)">
+            <a class="contact-card reveal-item" data-reveal="left" href="https://github.com/Bread03566" target="_blank" rel="noopener noreferrer" aria-label="Visit Bench Ivan Canzana's GitHub profile (opens in a new tab)">
               <div class="contact-card__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.03a9.6 9.6 0 0 1 5.02 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.85v2.75c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
@@ -263,7 +272,7 @@
             </a>
           </div>
 
-          <form class="contact-form reveal-item" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form">
+          <form class="contact-form reveal-item" data-reveal="right" style="--i: 4" action="https://formspree.io/f/mbgdkbeq" method="POST" aria-label="Contact form">
             <div class="form-field">
               <label for="contact-name">Name</label>
               <input type="text" id="contact-name" name="name" autocomplete="name" placeholder="Your name" required>
@@ -307,6 +316,6 @@
 
   </div>
 
-  <script src="./script.js?v=3"></script>
+  <script src="./script.js?v=4"></script>
 </body>
 </html>
