@@ -287,6 +287,49 @@ const initContactForm = () => {
   });
 };
 
+
+/**
+ * ACES project viewer: tabs that swap the screenshot and caption.
+ * Supports click and arrow/Home/End keys (roving tabindex).
+ */
+const initAcesTabs = () => {
+  const tabs = Array.from(document.querySelectorAll('.aces__tab'));
+  const image = document.getElementById('aces-image');
+  const caption = document.getElementById('aces-caption');
+  const panel = document.getElementById('aces-panel');
+  if (tabs.length === 0 || !image || !caption || !panel) return;
+
+  const select = (tab, focus = false) => {
+    tabs.forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-selected', String(active));
+      item.tabIndex = active ? 0 : -1;
+    });
+    image.src = tab.dataset.src;
+    image.alt = tab.dataset.alt;
+    caption.textContent = tab.dataset.caption;
+    panel.setAttribute('aria-labelledby', tab.id);
+    if (focus) tab.focus();
+  };
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => select(tab));
+    tab.addEventListener('keydown', (event) => {
+      const last = tabs.length - 1;
+      const moves = {
+        ArrowRight: index === last ? 0 : index + 1,
+        ArrowLeft: index === 0 ? last : index - 1,
+        Home: 0,
+        End: last,
+      };
+      if (!(event.key in moves)) return;
+      event.preventDefault();
+      select(tabs[moves[event.key]], true);
+    });
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initThemeToggle();
@@ -295,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initScrollEffects();
   initCardSpotlight();
+  initAcesTabs();
   initFooterYear();
   initContactForm();
 });

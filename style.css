@@ -1006,3 +1006,96 @@ textarea {
     flex: 1.5;
   }
 }
+
+/* ==========================================================================
+   16. ACES Project Viewer (tabbed screenshots)
+   ========================================================================== */
+.aces {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.aces__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.aces__title {
+  font-size: var(--fs-xl);
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+}
+
+.aces__desc {
+  max-width: 62ch;
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+
+.aces__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.aces__tab {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.aces__tab:hover {
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+
+.aces__tab[aria-selected="true"] {
+  background-color: var(--color-inverse-bg);
+  border-color: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+  font-weight: 700;
+}
+
+.aces__viewer {
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-alt);
+}
+
+.aces__viewer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.aces__caption {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  min-height: 3em;
+}
+
+@media (min-width: 1024px) {
+  .aces {
+    padding: var(--space-lg);
+  }
+}
+
+.aces__link {
+  margin-top: var(--space-sm);
+  padding: 0.5rem 1.1rem;
+  font-size: var(--fs-sm);
+}
