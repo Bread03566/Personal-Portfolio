@@ -15,7 +15,7 @@
   --color-glow-strong: rgba(255, 255, 255, 0.09);
   --color-surface-glass: rgba(17, 17, 17, 0.76);
   --color-glass-lip: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --color-light-pool: rgba(237, 234, 228, 0.055);
+  --color-light-pool: rgba(237, 234, 228, 0.085);
 
   /* Typography */
   --font-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -60,7 +60,7 @@
   --color-glow-strong: rgba(0, 0, 0, 0.065);
   --color-surface-glass: rgba(245, 244, 241, 0.80);
   --color-glass-lip: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --color-light-pool: rgba(27, 27, 26, 0.038);
+  --color-light-pool: rgba(27, 27, 26, 0.055);
 }
 
 /* ==========================================================================
@@ -528,13 +528,101 @@ textarea {
   gap: var(--space-lg);
 }
 
-.about__photo {
+.about__photo-wrap {
+  position: relative;
   width: 160px;
   height: 160px;
+  flex-shrink: 0;
   border-radius: 50%;
-  object-fit: cover;
+  overflow: hidden;
   border: 1px solid var(--color-border);
-  filter: grayscale(0);
+  transition: transform 500ms ease, border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.about__photo-wrap.is-lit {
+  border-color: var(--color-text);
+  box-shadow: 0 0 28px -6px var(--color-glow-strong);
+}
+
+.about__photo-wrap:hover {
+  transform: scale(1.04);
+}
+
+.about__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.about__photo--mono {
+  filter: grayscale(1) contrast(1.08) brightness(0.9);
+  transition: filter 450ms ease;
+}
+
+@property --photo-lit {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.about__photo--lit {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter: saturate(1.08) contrast(1.02);
+  --photo-lx: 50%;
+  --photo-ly: 50%;
+  --photo-lit: 0px;
+  -webkit-mask-image: radial-gradient(
+    circle var(--photo-lit) at var(--photo-lx) var(--photo-ly),
+    #000 0%,
+    rgba(0, 0, 0, 0.92) 45%,
+    rgba(0, 0, 0, 0.35) 75%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--photo-lit) at var(--photo-lx) var(--photo-ly),
+    #000 0%,
+    rgba(0, 0, 0, 0.92) 45%,
+    rgba(0, 0, 0, 0.35) 75%,
+    transparent 100%
+  );
+  transition: --photo-lit 420ms cubic-bezier(0.3, 0.85, 0.3, 1);
+}
+
+.about__photo-wrap.is-lit .about__photo--lit {
+  --photo-lit: 220px;
+}
+
+/* Touch devices without a cursor light: keep portrait naturally visible */
+@media (hover: none) {
+  .about__photo--mono {
+    filter: none;
+  }
+
+  .about__photo--lit {
+    display: none;
+  }
+}
+
+/* Reduced motion or paused motion: clean hover reveal fallback */
+@media (prefers-reduced-motion: reduce) {
+  .about__photo--lit {
+    display: none;
+  }
+
+  .about__photo-wrap:hover .about__photo--mono {
+    filter: none;
+  }
+}
+
+:root[data-motion="paused"] .about__photo--lit {
+  display: none;
+}
+
+:root[data-motion="paused"] .about__photo-wrap:hover .about__photo--mono {
+  filter: none;
 }
 
 .about__text {
@@ -874,16 +962,6 @@ textarea {
 /* ==========================================================================
    13b. Interactive Polish
    ========================================================================== */
-.about__photo {
-  transition: filter 500ms ease, transform 500ms ease, border-color var(--transition-base);
-}
-
-.about__photo:hover {
-  filter: grayscale(1);
-  transform: scale(1.04);
-  border-color: var(--color-text);
-}
-
 .sidebar__link {
   position: relative;
 }
@@ -1498,13 +1576,22 @@ textarea {
     .js .sidebar.is-open .sidebar__nav li:nth-child(5) { transition-delay: 280ms; }
   }
 
-  /* ACES viewer: screenshot fades in when a tab is selected */
-  .aces__viewer img:not([hidden]) {
-    animation: viewer-in 350ms ease;
+  /* ACES viewer: media and caption animate when switching tabs */
+  .aces__viewer img:not([hidden]),
+  .aces__viewer video:not([hidden]) {
+    animation: viewer-in 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .aces__caption.is-swapping {
+    animation: caption-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
   @keyframes viewer-in {
-    from { opacity: 0; scale: 0.985; }
+    from { opacity: 0; translate: var(--slide-dir, 14px) 0; scale: 0.985; }
+  }
+
+  @keyframes caption-in {
+    from { opacity: 0; translate: 0 6px; }
   }
 
   /* Hero name: words rise out of a mask, one after another */
@@ -1569,23 +1656,6 @@ textarea {
   .js .reveal.is-visible .skill-group__tags li {
     opacity: 1;
     translate: 0 0;
-  }
-
-  /* Project dialogs open with a soft rise, backdrop fades in */
-  .aces-dialog[open] {
-    animation: dialog-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .aces-dialog[open]::backdrop {
-    animation: backdrop-in 320ms ease;
-  }
-
-  @keyframes dialog-in {
-    from { opacity: 0; translate: 0 18px; scale: 0.97; }
-  }
-
-  @keyframes backdrop-in {
-    from { opacity: 0; }
   }
 
   /* Form feedback */
@@ -1711,13 +1781,13 @@ textarea {
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  :root:not([data-motion="paused"]) .dao-ring,
-  :root:not([data-motion="paused"]) .dao-trail {
+  :root:not([data-motion="paused"]) body:not(.dao-dialog-open):not(:has(dialog[open])) .dao-ring,
+  :root:not([data-motion="paused"]) body:not(.dao-dialog-open):not(:has(dialog[open])) .dao-trail {
     display: block;
   }
 
-  :root:not([data-motion="paused"]) body.dao-cursor-active,
-  :root:not([data-motion="paused"]) body.dao-cursor-active * {
+  :root:not([data-motion="paused"]) body.dao-cursor-active:not(.dao-dialog-open):not(:has(dialog[open])),
+  :root:not([data-motion="paused"]) body.dao-cursor-active:not(.dao-dialog-open):not(:has(dialog[open])) * {
     cursor: none;
   }
 
@@ -1868,5 +1938,144 @@ textarea {
     16% { opacity: 1; }
     62% { transform: translateY(15px); opacity: 1; }
     100% { transform: translateY(20px); opacity: 0; }
+  }
+}
+
+/* ==========================================================================
+   20. Project Viewing & Top-Layer Dialog Motion
+   ========================================================================== */
+/* 3D perspective tilt + top-edge light shimmer on project cards */
+.project-card {
+  transform-style: preserve-3d;
+}
+
+.project-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 1px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--color-text), transparent);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="paused"]) .project-card {
+    transition:
+      transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-base);
+  }
+
+  :root:not([data-motion="paused"]) .project-card:hover {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-5px);
+    box-shadow: var(--color-glass-lip), 0 18px 40px -24px rgba(0, 0, 0, 0.7);
+  }
+
+  :root:not([data-motion="paused"]) .project-card:hover::after {
+    opacity: 0.75;
+    animation: card-edge-sweep 900ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+
+  @keyframes card-edge-sweep {
+    0% { left: -40%; opacity: 0; }
+    20% { opacity: 0.75; }
+    100% { left: 100%; opacity: 0; }
+  }
+}
+
+/* Top-layer <dialog> smooth entry & exit transitions (@starting-style + allow-discrete) */
+.aces-dialog {
+  opacity: 0;
+  background-color: var(--color-surface-glass);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  box-shadow: var(--color-glass-lip), 0 28px 70px -20px rgba(0, 0, 0, 0.75);
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 320ms;
+  transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-behavior: allow-discrete;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aces-dialog {
+    transform: translateY(18px) scale(0.96);
+  }
+}
+
+.aces-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition-property: background-color, backdrop-filter, -webkit-backdrop-filter, display, overlay;
+  transition-duration: 320ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+
+:is(.aces-dialog[open]):where(:not([data-closing])) {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translateY(0) scale(1);
+
+    @starting-style {
+      transform: translateY(18px) scale(0.96);
+    }
+  }
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    @starting-style {
+      background-color: rgba(0, 0, 0, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aces-dialog,
+  .aces-dialog::backdrop {
+    transition-duration: 100ms;
+  }
+}
+
+/* Staggered content cascade when a project dialog opens */
+@media (prefers-reduced-motion: no-preference) {
+  :is(.aces-dialog[open]):where(:not([data-closing])) > * {
+    animation: dialog-child-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  :is(.aces-dialog[open]):where(:not([data-closing])) > :nth-child(1) { animation-delay: 40ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) > :nth-child(2) { animation-delay: 90ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) > :nth-child(3) { animation-delay: 140ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) > :nth-child(4) { animation-delay: 190ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) > :nth-child(5) { animation-delay: 240ms; }
+
+  :is(.aces-dialog[open]):where(:not([data-closing])) .detail__row {
+    animation: dialog-child-in 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  :is(.aces-dialog[open]):where(:not([data-closing])) .detail__row:nth-child(1) { animation-delay: 180ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) .detail__row:nth-child(2) { animation-delay: 230ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) .detail__row:nth-child(3) { animation-delay: 280ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) .detail__row:nth-child(4) { animation-delay: 330ms; }
+  :is(.aces-dialog[open]):where(:not([data-closing])) .detail__row:nth-child(5) { animation-delay: 380ms; }
+
+  @keyframes dialog-child-in {
+    from {
+      opacity: 0;
+      translate: 0 10px;
+    }
   }
 }

@@ -45,7 +45,7 @@
       if (!window.__motionReady) document.documentElement.classList.remove('js');
     }, 3000);
   </script>
-  <link rel="stylesheet" href="./style.css?v=19">
+  <link rel="stylesheet" href="./style.css?v=21">
 </head>
 <body>
 
@@ -163,16 +163,25 @@
         <hr class="rule reveal-item" data-reveal="line">
 
         <div class="about__content">
-          <img
-            class="about__photo reveal-item"
-            data-reveal="left"
-            style="--i: 2"
-            src="./assets/profile.jpg"
-            alt="Portrait photo of Bench Ivan Canzana"
-            width="200"
-            height="200"
-            loading="lazy"
-          >
+          <div class="about__photo-wrap reveal-item" data-reveal="left" style="--i: 2" id="about-photo-wrap">
+            <img
+              class="about__photo about__photo--mono"
+              src="./assets/profile.jpg"
+              alt="Portrait photo of Bench Ivan Canzana"
+              width="200"
+              height="200"
+              loading="lazy"
+            >
+            <img
+              class="about__photo about__photo--lit"
+              src="./assets/profile.jpg"
+              alt=""
+              aria-hidden="true"
+              width="200"
+              height="200"
+              loading="lazy"
+            >
+          </div>
           <div class="about__text reveal-item" data-reveal="right" style="--i: 3">
             <p>
               I'm a graduating student and aspiring Software Engineer who turns ideas into working
@@ -508,6 +517,6 @@
     </svg>
   </button>
 
-  <script src="./script.js?v=19"></script>
+  <script src="./script.js?v=21"></script>
 </body>
 </html>

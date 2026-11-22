@@ -723,11 +723,15 @@ const initDaoCursor = () => {
   const ringEl = document.getElementById('dao-ring');
   const lightEl = document.getElementById('dao-light');
   const trailEls = Array.from(document.querySelectorAll('#dao-trail i'));
+  const photoWrap = document.getElementById('about-photo-wrap');
+  const photoLit = photoWrap ? photoWrap.querySelector('.about__photo--lit') : null;
   if (!ringEl || trailEls.length === 0) return;
 
   const isDisabled = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-    document.documentElement.getAttribute('data-motion') === 'paused';
+    document.documentElement.getAttribute('data-motion') === 'paused' ||
+    document.body.classList.contains('dao-dialog-open') ||
+    Boolean(document.querySelector('dialog[open]'));
 
   const TRAIL_EASE = [0.42, 0.31, 0.235, 0.175, 0.13, 0.095];
   const trailPos = trailEls.map(() => ({ x: -999, y: -999 }));
@@ -738,14 +742,45 @@ const initDaoCursor = () => {
   let raf = 0;
   let pressTimer = 0;
 
+  const clearPhotoLight = () => {
+    if (photoWrap) photoWrap.classList.remove('is-lit');
+  };
+
+  /* Reveals color on the monochrome portrait wherever the cursor light pool reaches it */
+  const updatePhotoLight = () => {
+    if (!photoWrap || !photoLit) return;
+    if (!active || isDisabled() || cx < -900) {
+      clearPhotoLight();
+      return;
+    }
+
+    const rect = photoWrap.getBoundingClientRect();
+    const centerX = rect.left + rect.width * 0.5;
+    const centerY = rect.top + rect.height * 0.5;
+    const dx = cx - centerX;
+    const dy = cy - centerY;
+    const dist = Math.hypot(dx, dy);
+    const lightReach = rect.width * 0.5 + 220;
+
+    if (dist < lightReach) {
+      photoLit.style.setProperty('--photo-lx', `${(cx - rect.left).toFixed(1)}px`);
+      photoLit.style.setProperty('--photo-ly', `${(cy - rect.top).toFixed(1)}px`);
+      photoWrap.classList.add('is-lit');
+    } else {
+      photoWrap.classList.remove('is-lit');
+    }
+  };
+
   const updateScrollCapsule = () => {
     const nearTop = window.scrollY < Math.max(120, window.innerHeight * 0.35);
     document.body.classList.toggle('dao-cursor-scroll', nearTop && !document.body.classList.contains('dao-cursor-on'));
+    updatePhotoLight();
   };
 
   const deactivate = () => {
     active = false;
     document.body.classList.remove('dao-cursor-active', 'dao-cursor-on', 'dao-cursor-scroll', 'dao-cursor-press');
+    clearPhotoLight();
     if (raf) {
       cancelAnimationFrame(raf);
       raf = 0;
@@ -764,6 +799,7 @@ const initDaoCursor = () => {
       lightEl.style.setProperty('--dao-lx', `${cx}px`);
       lightEl.style.setProperty('--dao-ly', `${cy}px`);
     }
+    updatePhotoLight();
 
     let ax = cx;
     let ay = cy;
@@ -842,23 +878,49 @@ const initDaoCursor = () => {
   window.addEventListener('scroll', updateScrollCapsule, { passive: true });
   document.addEventListener('mouseleave', deactivate);
   window.addEventListener('blur', deactivate);
+  window.addEventListener('portfolio:dialogchange', (event) => {
+    if (event.detail && event.detail.open) deactivate();
+  });
   window.addEventListener('portfolio:motionchange', (event) => {
     if (event.detail && event.detail.paused) deactivate();
   });
 };
 
 /**
- * Cursor-follow spotlight on project and contact cards (fine pointers only).
+ * Cursor-follow spotlight + subtle 3D perspective tilt on project cards
+ * (fine pointers only).
  */
 const initCardSpotlight = () => {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
+  const isTiltDisabled = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    document.documentElement.getAttribute('data-motion') === 'paused';
+
   document.querySelectorAll('.project-card, .contact-card').forEach((card) => {
+    const isProject = card.classList.contains('project-card');
+
     card.addEventListener('pointermove', (event) => {
       const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      card.style.setProperty('--mx', `${x}px`);
+      card.style.setProperty('--my', `${y}px`);
+
+      if (isProject && !isTiltDisabled()) {
+        const nx = (x / rect.width - 0.5) * 2;
+        const ny = (y / rect.height - 0.5) * 2;
+        card.style.setProperty('--rx', `${(-ny * 4.5).toFixed(2)}deg`);
+        card.style.setProperty('--ry', `${(nx * 4.5).toFixed(2)}deg`);
+      }
     });
+
+    if (isProject) {
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      });
+    }
   });
 };
 
@@ -995,6 +1057,63 @@ const initBackToTop = () => {
 };
 
 /**
+ * Top-layer <dialog> helpers:
+ *  - Detects native discrete display + overlay exit transition support (probing
+ *    computed display to guard against Firefox 129+ bug 1882408).
+ *  - Animates exit smoothly via [data-closing] fallback when unsupported.
+ *  - Restores the native mouse cursor whenever a modal dialog is open so the
+ *    custom DOM cursor never disappears behind the browser's Top Layer.
+ */
+let cachedDisplayTransitionSupport;
+const canTransitionDisplay = () => {
+  if (cachedDisplayTransitionSupport !== undefined) return cachedDisplayTransitionSupport;
+  if (!window.CSS || !window.CSS.supports || !window.CSS.supports('transition-behavior', 'allow-discrete') || !document.body) {
+    return false;
+  }
+  const probe = document.createElement('div');
+  probe.style.cssText = 'transition: display 1s allow-discrete !important; display: block;';
+  document.body.appendChild(probe);
+  getComputedStyle(probe).display;
+  probe.style.display = 'none';
+  cachedDisplayTransitionSupport = getComputedStyle(probe).display === 'block';
+  probe.remove();
+  return cachedDisplayTransitionSupport;
+};
+
+const supportsTopLayerExit = () =>
+  Boolean(window.CSS && window.CSS.supports && window.CSS.supports('overlay', 'auto')) &&
+  canTransitionDisplay();
+
+const syncDialogCursorState = () => {
+  const hasOpen = Boolean(document.querySelector('dialog[open]:not([data-closing])'));
+  document.body.classList.toggle('dao-dialog-open', hasOpen);
+  window.dispatchEvent(new CustomEvent('portfolio:dialogchange', { detail: { open: hasOpen } }));
+};
+
+const openTopLayerDialog = (dialog) => {
+  dialog.removeAttribute('data-closing');
+  dialog.showModal();
+  syncDialogCursorState();
+};
+
+const closeTopLayerDialog = async (dialog) => {
+  if (!dialog.open || dialog.hasAttribute('data-closing')) return;
+  if (!supportsTopLayerExit()) {
+    dialog.setAttribute('data-closing', '');
+    const animations = dialog.getAnimations ? dialog.getAnimations({ subtree: true }) : [];
+    if (animations.length > 0) {
+      await Promise.race([
+        Promise.allSettled(animations.map((anim) => anim.finished)),
+        new Promise((resolve) => setTimeout(resolve, 600)),
+      ]);
+    }
+    if (!dialog.hasAttribute('data-closing')) return;
+    dialog.removeAttribute('data-closing');
+  }
+  dialog.close();
+};
+
+/**
  * Detail dialogs for the other projects (Examnesia, this portfolio).
  * Any [data-dialog-open="id"] button opens the matching <dialog>.
  */
@@ -1003,21 +1122,28 @@ const initProjectDialogs = () => {
     const dialog = document.getElementById(trigger.dataset.dialogOpen);
     if (!dialog || typeof dialog.showModal !== 'function') return;
 
-    trigger.addEventListener('click', () => dialog.showModal());
+    trigger.addEventListener('click', () => openTopLayerDialog(dialog));
     dialog.querySelectorAll('[data-dialog-close]').forEach((btn) => {
-      btn.addEventListener('click', () => dialog.close());
+      btn.addEventListener('click', () => closeTopLayerDialog(dialog));
     });
     dialog.addEventListener('click', (event) => {
-      if (event.target === dialog) dialog.close();
+      if (event.target === dialog) closeTopLayerDialog(dialog);
     });
-    dialog.addEventListener('close', () => trigger.focus());
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      closeTopLayerDialog(dialog);
+    });
+    dialog.addEventListener('close', () => {
+      syncDialogCursorState();
+      trigger.focus();
+    });
   });
 };
 
 
 /**
- * ACES project viewer: tabs that swap the screenshot and caption.
- * Supports click and arrow/Home/End keys (roving tabindex).
+ * ACES project viewer: tabs that swap the screenshot/video and caption with
+ * directional glide animations. Supports click and arrow/Home/End keys.
  */
 const initAcesTabs = () => {
   const tabs = Array.from(document.querySelectorAll('.aces__tab'));
@@ -1027,24 +1153,48 @@ const initAcesTabs = () => {
   const video = document.getElementById('aces-video');
   if (tabs.length === 0 || !image || !caption || !panel) return;
 
+  let activeIndex = Math.max(0, tabs.findIndex((t) => t.classList.contains('is-active')));
+
+  const replayAnimation = (el) => {
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  };
+
   const select = (tab, focus = false) => {
+    const nextIndex = tabs.indexOf(tab);
+    const direction = nextIndex >= activeIndex ? '16px' : '-16px';
+    activeIndex = nextIndex;
+    panel.style.setProperty('--slide-dir', direction);
+
     tabs.forEach((item) => {
       const active = item === tab;
       item.classList.toggle('is-active', active);
       item.setAttribute('aria-selected', String(active));
       item.tabIndex = active ? 0 : -1;
     });
+
     const showVideo = Boolean(tab.dataset.video) && Boolean(video);
     if (video) {
       video.hidden = !showVideo;
-      if (!showVideo) video.pause();
+      if (!showVideo) {
+        video.pause();
+      } else {
+        replayAnimation(video);
+      }
     }
     image.hidden = showVideo;
     if (!showVideo) {
       image.src = tab.dataset.src;
       image.alt = tab.dataset.alt;
+      replayAnimation(image);
     }
+
     caption.textContent = tab.dataset.caption;
+    caption.classList.remove('is-swapping');
+    void caption.offsetWidth;
+    caption.classList.add('is-swapping');
+
     panel.setAttribute('aria-labelledby', tab.id);
     if (focus) tab.focus();
   };
@@ -1069,7 +1219,8 @@ const initAcesTabs = () => {
 
 /**
  * Opens and closes the ACES screenshot dialog (native <dialog>).
- * Closes on the X button, Escape (built in), or a click on the backdrop.
+ * Closes on the X button, Escape, or a click on the backdrop, with smooth
+ * top-layer entry/exit animations and native cursor restoration.
  */
 const initAcesDialog = () => {
   const dialog = document.getElementById('aces-dialog');
@@ -1077,14 +1228,19 @@ const initAcesDialog = () => {
   const closeButton = document.getElementById('aces-close');
   if (!dialog || !openButton || !closeButton || typeof dialog.showModal !== 'function') return;
 
-  openButton.addEventListener('click', () => dialog.showModal());
-  closeButton.addEventListener('click', () => dialog.close());
+  openButton.addEventListener('click', () => openTopLayerDialog(dialog));
+  closeButton.addEventListener('click', () => closeTopLayerDialog(dialog));
   dialog.addEventListener('click', (event) => {
-    if (event.target === dialog) dialog.close();
+    if (event.target === dialog) closeTopLayerDialog(dialog);
+  });
+  dialog.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeTopLayerDialog(dialog);
   });
   dialog.addEventListener('close', () => {
     const video = document.getElementById('aces-video');
     if (video) video.pause();
+    syncDialogCursorState();
     openButton.focus();
   });
 };
