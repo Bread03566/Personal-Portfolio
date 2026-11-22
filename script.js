@@ -375,7 +375,7 @@ const initBackToTop = () => {
 };
 
 /**
- * Detail dialogs for the other projects (Kabisado, this portfolio).
+ * Detail dialogs for the other projects (Examnesia, this portfolio).
  * Any [data-dialog-open="id"] button opens the matching <dialog>.
  */
 const initProjectDialogs = () => {
