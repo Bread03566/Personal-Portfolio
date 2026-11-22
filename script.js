@@ -270,9 +270,13 @@ const initMotionToggle = () => {
 };
 
 /**
- * DAO-inspired orbital point-cloud accretion field & luminous photon ring.
- * Pure vanilla HTML5 Canvas 2D with Keplerian orbital velocities, scroll-reactive
- * perspective tilt, and subtle cursor gravitational wake.
+ * DAO-inspired Event Horizon orbital point-cloud field.
+ * Pure vanilla HTML5 Canvas 2D featuring:
+ *  - Tilted 3D Keplerian accretion disc with front/back depth sorting
+ *  - Gravitationally lensed upper & lower Einstein arcs around the dark core
+ *  - Scroll-velocity-reactive relativistic light streaks
+ *  - Luminous double-layered photon ring & ambient deep-field dust
+ *  - Smooth multi-point cursor wake and pointer-responsive perspective tilt
  */
 const initDaoField = () => {
   const canvas = document.getElementById('dao-field');
@@ -292,63 +296,95 @@ const initDaoField = () => {
     dpr: 1,
     cx: 0,
     cy: 0,
-    baseRadius: 180,
+    baseRadius: 185,
     scrollTarget: 0,
     scrollShown: 0,
+    scrollVel: 0,
+    prevScrollShown: 0,
     pointerX: -9999,
     pointerY: -9999,
     pointerActive: false,
     wakeX: 0,
     wakeY: 0,
+    wakes: Array.from({ length: 5 }, () => ({ x: -9999, y: -9999, strength: 0 })),
+    wakeIdx: 0,
     raf: 0,
     lastTime: 0,
     elapsed: 0,
   };
 
-  /* Deterministic pseudo-random generator for stable star/disc distribution */
+  /* Deterministic PRNG for a balanced, repeatable star & disc layout */
   let seed = 1337;
   const rand = () => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
   };
 
-  /* Build Keplerian accretion disc particles, photon ring particles, and deep dust */
-  const discCount = 420;
-  const ringCount = 110;
-  const dustCount = 90;
+  const discCount = 460;
+  const lensArcCount = 130;
+  const strandCount = 58;
+  const ringCount = 120;
+  const dustCount = 95;
 
   const discParticles = Array.from({ length: discCount }, () => {
     const u = Math.pow(rand(), 1.65);
-    const radius = 0.62 + u * 2.15;
+    const radius = 0.60 + u * 2.25;
     return {
       r: radius,
       angle: rand() * Math.PI * 2,
-      omega: 0.42 * Math.pow(radius, -1.45),
-      yOffset: (rand() - 0.5) * (0.04 + 0.06 * radius),
-      size: 0.7 + rand() * 1.45,
-      alpha: Math.pow(0.62 / radius, 1.15) * (0.35 + rand() * 0.65) * (1 - Math.max(0, (radius - 2.0) / 0.9) * 0.6),
+      omega: 0.44 * Math.pow(radius, -1.45),
+      yOffset: (rand() - 0.5) * (0.035 + 0.055 * radius),
+      size: 0.65 + rand() * 1.45,
+      warmth: rand(),
+      alpha: Math.pow(0.60 / radius, 1.18) * (0.38 + rand() * 0.62) * (1 - Math.max(0, (radius - 2.05) / 0.95) * 0.65),
     };
   });
 
-  const ringParticles = Array.from({ length: ringCount }, () => {
-    const radius = 0.52 + (rand() - 0.5) * 0.085;
+  /* Gravitationally lensed particles bending over and under the event-horizon core */
+  const lensArcParticles = Array.from({ length: lensArcCount }, () => {
+    const sign = rand() > 0.45 ? -1 : 1; // slightly denser upper Einstein arch
+    return {
+      sign,
+      angle: (rand() - 0.5) * Math.PI * 0.96,
+      r: 0.56 + Math.pow(rand(), 1.8) * 0.46,
+      omega: 0.34 + rand() * 0.28,
+      size: 0.65 + rand() * 1.25,
+      alpha: 0.24 + rand() * 0.48,
+    };
+  });
+
+  /* Curved orbital motion streaks that lengthen during fast scrolls */
+  const strands = Array.from({ length: strandCount }, () => {
+    const u = Math.pow(rand(), 1.45);
+    const radius = 0.64 + u * 1.75;
     return {
       r: radius,
       angle: rand() * Math.PI * 2,
-      omega: 0.68 + rand() * 0.35,
-      size: 0.8 + rand() * 1.3,
-      alpha: 0.32 + rand() * 0.55,
+      omega: 0.46 * Math.pow(radius, -1.45),
+      yOffset: (rand() - 0.5) * 0.04 * radius,
+      baseArc: 0.09 + rand() * 0.14,
+      alpha: Math.pow(0.64 / radius, 1.1) * (0.24 + rand() * 0.34),
+      width: 0.6 + rand() * 0.85,
     };
   });
+
+  const ringParticles = Array.from({ length: ringCount }, () => ({
+    r: 0.51 + (rand() - 0.5) * 0.075,
+    angle: rand() * Math.PI * 2,
+    omega: 0.66 + rand() * 0.38,
+    size: 0.75 + rand() * 1.35,
+    alpha: 0.35 + rand() * 0.55,
+  }));
 
   const dustParticles = Array.from({ length: dustCount }, () => ({
     x: rand(),
     y: rand(),
-    vx: (rand() - 0.5) * 0.008,
-    vy: (rand() - 0.5) * 0.008,
-    size: 0.55 + rand() * 1.1,
-    alpha: 0.1 + rand() * 0.3,
+    vx: (rand() - 0.5) * 0.007,
+    vy: (rand() - 0.5) * 0.007,
+    size: 0.55 + rand() * 1.15,
+    alpha: 0.10 + rand() * 0.30,
     depth: 0.3 + rand() * 0.7,
+    phase: rand() * Math.PI * 2,
   }));
 
   const resize = () => {
@@ -361,9 +397,9 @@ const initDaoField = () => {
 
     const sidebarOffset = state.w >= 1024 ? 260 : 0;
     const contentW = state.w - sidebarOffset;
-    state.cx = sidebarOffset + contentW * (state.w >= 1024 ? 0.64 : 0.56);
+    state.cx = sidebarOffset + contentW * (state.w >= 1024 ? 0.66 : 0.56);
     state.cy = state.h * 0.46;
-    state.baseRadius = Math.min(contentW, state.h) * (state.w >= 1024 ? 0.25 : 0.28);
+    state.baseRadius = Math.min(contentW, state.h) * (state.w >= 1024 ? 0.255 : 0.285);
   };
 
   const updateScroll = () => {
@@ -373,118 +409,223 @@ const initDaoField = () => {
 
   const renderFrame = (dt) => {
     state.elapsed += dt;
+    state.prevScrollShown = state.scrollShown;
     state.scrollShown += (state.scrollTarget - state.scrollShown) * Math.min(1, dt * 4.5);
+
+    const instantVel = dt > 0 ? Math.abs(state.scrollShown - state.prevScrollShown) / dt : 0;
+    state.scrollVel += (Math.min(instantVel, 2.2) - state.scrollVel) * Math.min(1, dt * 6);
 
     const targetWakeX = state.pointerActive ? (state.pointerX - state.cx) / Math.max(state.w, 1) : 0;
     const targetWakeY = state.pointerActive ? (state.pointerY - state.cy) / Math.max(state.h, 1) : 0;
-    state.wakeX += (targetWakeX - state.wakeX) * Math.min(1, dt * 3.5);
-    state.wakeY += (targetWakeY - state.wakeY) * Math.min(1, dt * 3.5);
+    state.wakeX += (targetWakeX - state.wakeX) * Math.min(1, dt * 3.2);
+    state.wakeY += (targetWakeY - state.wakeY) * Math.min(1, dt * 3.2);
+
+    /* Decay pointer wake ripples */
+    for (let i = 0; i < state.wakes.length; i++) {
+      state.wakes[i].strength *= Math.pow(0.06, dt);
+    }
 
     ctx.clearRect(0, 0, state.w, state.h);
 
     const light = isLightTheme();
-    const rgb = light ? '27, 27, 26' : '237, 234, 228';
-    const intensity = light ? 0.42 : 0.58;
+    const rgbCore = light ? '236, 235, 232' : '10, 10, 10';
+    const rgbWarm = light ? '27, 27, 26' : '244, 240, 232';
+    const rgbCool = light ? '72, 72, 68' : '206, 212, 222';
+    const intensity = light ? 0.45 : 0.64;
 
     const p = state.scrollShown;
-    const centerX = state.cx + state.wakeX * 26 - p * (state.w >= 1024 ? 42 : 18);
-    const centerY = state.cy + state.wakeY * 18 - p * 36;
-    const radiusScale = state.baseRadius * (1 + p * 0.14);
+    /* Subtle choreography across sections as the user scrolls */
+    const centerX = state.cx + state.wakeX * 28 - Math.sin(p * Math.PI) * (state.w >= 1024 ? 54 : 20);
+    const centerY = state.cy + state.wakeY * 20 - p * 30;
+    const radiusScale = state.baseRadius * (1 + Math.sin(p * Math.PI * 0.9) * 0.14);
 
-    /* Orbital plane tilt & rotation evolve smoothly as the user scrolls */
-    const tilt = 0.28 + Math.sin(p * Math.PI * 0.85) * 0.22 + state.wakeY * 0.14;
-    const roll = -0.26 + p * 0.42 + state.wakeX * 0.12;
+    const tilt = 0.25 + Math.sin(p * Math.PI * 0.85) * 0.22 + state.wakeY * 0.15;
+    const roll = -0.25 + p * 0.46 + state.wakeX * 0.12;
     const cosRoll = Math.cos(roll);
     const sinRoll = Math.sin(roll);
-    const spinBoost = p * 2.4;
+    const spinBoost = p * 2.8;
+    const streakBoost = 1 + state.scrollVel * 2.4;
 
-    /* 1. Soft atmospheric halo around the event horizon ring */
+    const projectDisc = (r, angle, yOff) => {
+      const x3 = Math.cos(angle) * r;
+      const z3 = Math.sin(angle) * r;
+      const px = x3;
+      const py = yOff + z3 * tilt;
+      return {
+        x: (px * cosRoll - py * sinRoll) * radiusScale + centerX,
+        y: (px * sinRoll + py * cosRoll) * radiusScale + centerY,
+        z: z3,
+      };
+    };
+
+    const applyWake = (x, y) => {
+      let fx = x;
+      let fy = y;
+      if (state.pointerActive) {
+        const dx = fx - state.pointerX;
+        const dy = fy - state.pointerY;
+        const distSq = dx * dx + dy * dy;
+        const maxR = 165;
+        if (distSq < maxR * maxR && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const force = Math.pow(1 - dist / maxR, 2) * 20;
+          fx += (dx / dist) * force;
+          fy += (dy / dist) * force;
+        }
+      }
+      for (let i = 0; i < state.wakes.length; i++) {
+        const w = state.wakes[i];
+        if (w.strength < 0.02) continue;
+        const dx = fx - w.x;
+        const dy = fy - w.y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < 15625 && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const push = Math.pow(1 - dist / 125, 2) * 14 * w.strength;
+          fx += (dx / dist) * push;
+          fy += (dy / dist) * push;
+        }
+      }
+      return [fx, fy];
+    };
+
+    /* 1. Outer atmospheric bloom halo */
     const halo = ctx.createRadialGradient(
       centerX,
       centerY,
-      radiusScale * 0.36,
+      radiusScale * 0.42,
       centerX,
       centerY,
-      radiusScale * 1.45
+      radiusScale * 1.55
     );
-    halo.addColorStop(0, `rgba(${rgb}, 0)`);
-    halo.addColorStop(0.28, `rgba(${rgb}, ${(light ? 0.045 : 0.075).toFixed(3)})`);
-    halo.addColorStop(0.55, `rgba(${rgb}, ${(light ? 0.018 : 0.03).toFixed(3)})`);
-    halo.addColorStop(1, `rgba(${rgb}, 0)`);
+    halo.addColorStop(0, `rgba(${rgbWarm}, 0)`);
+    halo.addColorStop(0.22, `rgba(${rgbWarm}, ${(light ? 0.055 : 0.095).toFixed(3)})`);
+    halo.addColorStop(0.50, `rgba(${rgbWarm}, ${(light ? 0.02 : 0.036).toFixed(3)})`);
+    halo.addColorStop(1, `rgba(${rgbWarm}, 0)`);
     ctx.fillStyle = halo;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radiusScale * 1.45, 0, Math.PI * 2);
+    ctx.arc(centerX, centerY, radiusScale * 1.55, 0, Math.PI * 2);
     ctx.fill();
 
-    /* 2. Ambient deep-field dust */
+    /* 2. Deep-field ambient dust with gentle twinkle */
     for (let i = 0; i < dustCount; i++) {
       const d = dustParticles[i];
       if (dt > 0) {
         d.x = (d.x + d.vx * dt + 1) % 1;
         d.y = (d.y + d.vy * dt + 1) % 1;
       }
-      const x = d.x * state.w + state.wakeX * 18 * d.depth;
-      const y = ((d.y * state.h - p * 70 * d.depth) % state.h + state.h) % state.h;
-      ctx.fillStyle = `rgba(${rgb}, ${(d.alpha * intensity * 0.75).toFixed(3)})`;
+      const x = d.x * state.w + state.wakeX * 20 * d.depth;
+      const y = ((d.y * state.h - p * 80 * d.depth) % state.h + state.h) % state.h;
+      const twinkle = 0.72 + 0.28 * Math.sin(state.elapsed * 1.4 + d.phase);
+      ctx.fillStyle = `rgba(${rgbCool}, ${(d.alpha * twinkle * intensity * 0.78).toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(x, y, d.size, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    /* Helper: subtle gravitational warp near the cursor */
-    const applyPointerWarp = (x, y) => {
-      if (!state.pointerActive) return [x, y];
-      const dx = x - state.pointerX;
-      const dy = y - state.pointerY;
-      const distSq = dx * dx + dy * dy;
-      const maxR = 160;
-      if (distSq < maxR * maxR && distSq > 1) {
-        const dist = Math.sqrt(distSq);
-        const force = Math.pow(1 - dist / maxR, 2) * 22;
-        return [x + (dx / dist) * force, y + (dy / dist) * force];
-      }
-      return [x, y];
-    };
-
-    /* 3. Keplerian accretion disc particles */
+    /* 3. Back half of the accretion disc (z <= 0, behind the core) */
     for (let i = 0; i < discCount; i++) {
       const pt = discParticles[i];
       const a = pt.angle + pt.omega * (state.elapsed * 0.65 + spinBoost);
-      const x3 = Math.cos(a) * pt.r;
-      const z3 = Math.sin(a) * pt.r;
-      const y3 = pt.yOffset;
+      const proj = projectDisc(pt.r, a, pt.yOffset);
+      if (proj.z > 0) continue;
 
-      /* Project tilted orbital plane */
-      const px = x3;
-      const py = y3 + z3 * tilt;
-      const rx = (px * cosRoll - py * sinRoll) * radiusScale + centerX;
-      const ry = (px * sinRoll + py * cosRoll) * radiusScale + centerY;
-
-      const [fx, fy] = applyPointerWarp(rx, ry);
-
-      /* Subtle relativistic Doppler brightening on the approaching side */
-      const doppler = 0.8 + 0.32 * Math.sin(a);
-      const depthFade = z3 > 0 ? 1 : 0.68;
-      const alpha = Math.min(0.9, pt.alpha * doppler * depthFade * intensity);
+      const [fx, fy] = applyWake(proj.x, proj.y);
+      const doppler = 0.78 + 0.34 * Math.sin(a);
+      const alpha = Math.min(0.85, pt.alpha * doppler * 0.68 * intensity);
+      const rgb = pt.warmth > 0.35 ? rgbWarm : rgbCool;
 
       ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
       ctx.beginPath();
-      ctx.arc(fx, fy, pt.size * (z3 > 0 ? 1.06 : 0.88), 0, Math.PI * 2);
+      ctx.arc(fx, fy, pt.size * 0.9, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    /* 4. Luminous photon ring */
-    for (let i = 0; i < ringCount; i++) {
-      const pt = ringParticles[i];
-      const a = pt.angle + pt.omega * (state.elapsed * 0.45 + spinBoost * 0.5);
-      const rx = Math.cos(a) * pt.r * radiusScale + centerX;
-      const ry = Math.sin(a) * pt.r * radiusScale + centerY;
-      const [fx, fy] = applyPointerWarp(rx, ry);
+    /* 4. Gravitationally lensed Einstein arcs (light bending over/under the shadow) */
+    for (let i = 0; i < lensArcCount; i++) {
+      const pt = lensArcParticles[i];
+      const sweep = pt.angle + Math.sin(state.elapsed * pt.omega * 0.45 + spinBoost * 0.4) * 0.28;
+      const lx = Math.sin(sweep) * pt.r;
+      const ly = pt.sign * Math.cos(sweep) * pt.r * (0.76 + (1 - Math.abs(tilt)) * 0.22);
+      const rx = (lx * cosRoll - ly * sinRoll) * radiusScale + centerX;
+      const ry = (lx * sinRoll + ly * cosRoll) * radiusScale + centerY;
+      const [fx, fy] = applyWake(rx, ry);
 
-      const alpha = Math.min(0.85, pt.alpha * intensity);
-      ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+      const archFade = Math.max(0, Math.cos(sweep));
+      const alpha = Math.min(0.75, pt.alpha * archFade * intensity * 0.85);
+      ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* 5. Event-horizon core shadow + subtle crisp photon ring edge */
+    const coreRadius = radiusScale * 0.50;
+    const coreGrad = ctx.createRadialGradient(centerX, centerY, coreRadius * 0.65, centerX, centerY, coreRadius * 1.08);
+    coreGrad.addColorStop(0, `rgba(${rgbCore}, ${light ? 0.86 : 0.94})`);
+    coreGrad.addColorStop(0.82, `rgba(${rgbCore}, ${light ? 0.58 : 0.74})`);
+    coreGrad.addColorStop(1, `rgba(${rgbCore}, 0)`);
+    ctx.fillStyle = coreGrad;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, coreRadius * 1.08, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = `rgba(${rgbWarm}, ${(light ? 0.14 : 0.22).toFixed(3)})`;
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, coreRadius * 1.02, 0, Math.PI * 2);
+    ctx.stroke();
+
+    /* 6. Relativistic orbital motion-streak strands */
+    ctx.lineCap = 'round';
+    for (let i = 0; i < strandCount; i++) {
+      const s = strands[i];
+      const a0 = s.angle + s.omega * (state.elapsed * 0.68 + spinBoost);
+      const arcLen = Math.min(0.52, s.baseArc * streakBoost);
+      const a1 = a0 - arcLen;
+      const p0 = projectDisc(s.r, a0, s.yOffset);
+      const pMid = projectDisc(s.r, (a0 + a1) * 0.5, s.yOffset);
+      const p1 = projectDisc(s.r, a1, s.yOffset);
+
+      const alpha = Math.min(0.65, s.alpha * (p0.z > 0 ? 1 : 0.52) * intensity * (0.9 + state.scrollVel * 0.35));
+      ctx.strokeStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
+      ctx.lineWidth = s.width;
+      ctx.beginPath();
+      ctx.moveTo(p0.x, p0.y);
+      ctx.quadraticCurveTo(pMid.x, pMid.y, p1.x, p1.y);
+      ctx.stroke();
+    }
+
+    /* 7. Luminous photon ring particles */
+    for (let i = 0; i < ringCount; i++) {
+      const pt = ringParticles[i];
+      const a = pt.angle + pt.omega * (state.elapsed * 0.48 + spinBoost * 0.55);
+      const rx = Math.cos(a) * pt.r * radiusScale + centerX;
+      const ry = Math.sin(a) * pt.r * radiusScale + centerY;
+      const [fx, fy] = applyWake(rx, ry);
+
+      const alpha = Math.min(0.88, pt.alpha * intensity);
+      ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* 8. Front half of the accretion disc (z > 0, sweeping across the core) */
+    for (let i = 0; i < discCount; i++) {
+      const pt = discParticles[i];
+      const a = pt.angle + pt.omega * (state.elapsed * 0.65 + spinBoost);
+      const proj = projectDisc(pt.r, a, pt.yOffset);
+      if (proj.z <= 0) continue;
+
+      const [fx, fy] = applyWake(proj.x, proj.y);
+      const doppler = 0.84 + 0.36 * Math.sin(a);
+      const alpha = Math.min(0.94, pt.alpha * doppler * intensity);
+      const rgb = pt.warmth > 0.3 ? rgbWarm : rgbCool;
+
+      ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(fx, fy, pt.size * 1.08, 0, Math.PI * 2);
       ctx.fill();
     }
   };
@@ -528,11 +669,26 @@ const initDaoField = () => {
   window.addEventListener('scroll', updateScroll, { passive: true });
 
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let lastWakeX = -9999;
+    let lastWakeY = -9999;
+
     window.addEventListener('pointermove', (event) => {
       if (event.pointerType === 'touch') return;
       state.pointerX = event.clientX;
       state.pointerY = event.clientY;
       state.pointerActive = true;
+
+      const dx = event.clientX - lastWakeX;
+      const dy = event.clientY - lastWakeY;
+      if (dx * dx + dy * dy > 625) {
+        const slot = state.wakes[state.wakeIdx];
+        slot.x = event.clientX;
+        slot.y = event.clientY;
+        slot.strength = 1;
+        state.wakeIdx = (state.wakeIdx + 1) % state.wakes.length;
+        lastWakeX = event.clientX;
+        lastWakeY = event.clientY;
+      }
     }, { passive: true });
 
     document.addEventListener('mouseleave', () => {
@@ -550,7 +706,6 @@ const initDaoField = () => {
 
   window.addEventListener('portfolio:motionchange', startOrDrawStatic);
 
-  /* Re-render static frame immediately when theme switches while paused */
   const themeObserver = new MutationObserver(() => {
     if (reduceMotion()) renderFrame(0);
   });
@@ -558,13 +713,15 @@ const initDaoField = () => {
 };
 
 /**
- * DAO-inspired ring cursor with 6-layer motion-blur trail, hero scroll-capsule
- * morph, interactive hover indicator, and click orbital lap.
+ * DAO-inspired ring cursor with 6-layer motion-blur trail, ambient light pool,
+ * hero scroll-capsule morph, interactive hover indicator, and click orbital lap.
+ * Automatically idles its animation frame once the trail converges.
  */
 const initDaoCursor = () => {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
   const ringEl = document.getElementById('dao-ring');
+  const lightEl = document.getElementById('dao-light');
   const trailEls = Array.from(document.querySelectorAll('#dao-trail i'));
   if (!ringEl || trailEls.length === 0) return;
 
@@ -603,9 +760,14 @@ const initDaoCursor = () => {
     }
 
     ringEl.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+    if (lightEl) {
+      lightEl.style.setProperty('--dao-lx', `${cx}px`);
+      lightEl.style.setProperty('--dao-ly', `${cy}px`);
+    }
 
     let ax = cx;
     let ay = cy;
+    let maxDelta = 0;
     for (let i = 0; i < trailEls.length; i++) {
       const p = trailPos[i];
       if (p.x < -900) {
@@ -617,6 +779,8 @@ const initDaoCursor = () => {
 
       const dx = ax - p.x;
       const dy = ay - p.y;
+      maxDelta = Math.max(maxDelta, Math.abs(dx) + Math.abs(dy));
+
       const ex = Math.min(Math.abs(dx) / 20, 1.4);
       const ey = Math.min(Math.abs(dy) / 20, 1.4);
       const grow = i * 0.065;
@@ -629,7 +793,16 @@ const initDaoCursor = () => {
       ay = p.y;
     }
 
-    raf = requestAnimationFrame(tick);
+    /* Keep animating only while the trail is still converging */
+    if (maxDelta > 0.15) {
+      raf = requestAnimationFrame(tick);
+    }
+  };
+
+  const wakeCursor = () => {
+    if (!raf && active && !isDisabled()) {
+      raf = requestAnimationFrame(tick);
+    }
   };
 
   window.addEventListener('pointermove', (event) => {
@@ -649,8 +822,8 @@ const initDaoCursor = () => {
         trailPos[i].x = cx;
         trailPos[i].y = cy;
       }
-      if (!raf) raf = requestAnimationFrame(tick);
     }
+    wakeCursor();
   }, { passive: true });
 
   window.addEventListener('pointerdown', (event) => {
