@@ -45,16 +45,19 @@
       if (!window.__motionReady) document.documentElement.classList.remove('js');
     }, 3000);
   </script>
-  <link rel="stylesheet" href="./style.css?v=17">
+  <link rel="stylesheet" href="./style.css?v=18">
 </head>
 <body>
 
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <div class="scroll-progress" aria-hidden="true"><span class="scroll-progress__bar" id="scroll-progress-bar"></span></div>
-  <div class="bg-parallax" aria-hidden="true">
-    <span class="bg-parallax__orb bg-parallax__orb--a" data-parallax="0.12"></span>
-    <span class="bg-parallax__orb bg-parallax__orb--b" data-parallax="-0.08"></span>
+  <canvas class="dao-field" id="dao-field" aria-hidden="true"></canvas>
+  <div class="dao-grain" id="dao-grain" aria-hidden="true"></div>
+  <div class="dao-trail" id="dao-trail" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="dao-ring" id="dao-ring" aria-hidden="true">
+    <i class="dao-ring__fall"></i>
+    <i class="dao-ring__orbit"><b><svg viewBox="0 0 13 10" aria-hidden="true"><path d="M6.5 2.1 11.1 8.4H1.9z"/></svg></b></i>
   </div>
 
   <div class="layout">
@@ -66,15 +69,26 @@
         <span class="hamburger__bar" aria-hidden="true"></span>
       </button>
       <a href="#home" class="topbar__brand">Bench Ivan Canzana</a>
-      <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to light mode">
-        <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </button>
+      <div class="topbar__actions">
+        <button type="button" id="motion-toggle" class="icon-button" aria-label="Pause background motion">
+          <svg class="icon icon--pause" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="5" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="14" y="5" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <svg class="icon icon--play" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 5.5 19 12 7 18.5V5.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button type="button" id="theme-toggle" class="icon-button" aria-pressed="false" aria-label="Switch to light mode">
+          <svg class="icon icon--moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="icon icon--sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
     </header>
 
     <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
@@ -107,6 +121,17 @@
               <path d="M12 2.5v2.25M12 19.25v2.25M4.22 4.22l1.59 1.59M18.19 18.19l1.59 1.59M2.5 12h2.25M19.25 12h2.25M4.22 19.78l1.59-1.59M18.19 5.81l1.59-1.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
             <span id="theme-toggle-label">Dark mode</span>
+          </button>
+
+          <button type="button" id="motion-toggle-desktop" class="theme-toggle-desktop motion-toggle-desktop">
+            <svg class="icon icon--pause" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="5" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="14" y="5" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <svg class="icon icon--play" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 5.5 19 12 7 18.5V5.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span id="motion-toggle-label">Pause motion</span>
           </button>
         </div>
       </div>
@@ -482,6 +507,6 @@
     </svg>
   </button>
 
-  <script src="./script.js?v=17"></script>
+  <script src="./script.js?v=18"></script>
 </body>
 </html>

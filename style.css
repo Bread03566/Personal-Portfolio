@@ -242,6 +242,28 @@ textarea {
   text-overflow: ellipsis;
 }
 
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.icon-button .icon--play,
+.motion-toggle-desktop .icon--play {
+  display: none;
+}
+
+:root[data-motion="paused"] .icon-button .icon--play,
+:root[data-motion="paused"] .motion-toggle-desktop .icon--play {
+  display: block;
+}
+
+:root[data-motion="paused"] .icon-button .icon--pause,
+:root[data-motion="paused"] .motion-toggle-desktop .icon--pause {
+  display: none;
+}
+
 .icon-button {
   display: flex;
   align-items: center;
@@ -426,10 +448,16 @@ textarea {
   color: var(--color-text);
 }
 
+.motion-toggle-desktop {
+  margin-top: 0.35rem;
+}
+
 /* ==========================================================================
    6. Content Layout
    ========================================================================== */
 .content {
+  position: relative;
+  z-index: 1;
   padding-top: calc(var(--topbar-height) + var(--space-xl));
   overflow-x: clip; /* off-screen slide-in elements must never cause horizontal scroll */
 }
@@ -697,6 +725,8 @@ textarea {
    12. Footer
    ========================================================================== */
 .site-footer {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--color-border);
   background-color: var(--color-surface);
 }
@@ -770,35 +800,6 @@ textarea {
   transform: scaleX(0);
   transform-origin: left center;
   will-change: transform;
-}
-
-.bg-parallax {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.bg-parallax__orb {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--color-glow) 0%, transparent 65%);
-  will-change: transform;
-}
-
-.bg-parallax__orb--a {
-  width: 520px;
-  height: 520px;
-  top: 5%;
-  right: -180px;
-}
-
-.bg-parallax__orb--b {
-  width: 420px;
-  height: 420px;
-  bottom: -120px;
-  left: 10%;
 }
 
 /* Reveal-on-scroll: only hidden when JS is running and motion is allowed.
@@ -1534,20 +1535,6 @@ textarea {
     100% { transform: translateY(100%); }
   }
 
-  /* Background orbs drift gently, on top of their scroll parallax */
-  .bg-parallax__orb--a { animation: orb-float-a 14s ease-in-out infinite alternate; }
-  .bg-parallax__orb--b { animation: orb-float-b 18s ease-in-out infinite alternate; }
-
-  @keyframes orb-float-a {
-    from { translate: 0 0; }
-    to { translate: -40px 30px; }
-  }
-
-  @keyframes orb-float-b {
-    from { translate: 0 0; }
-    to { translate: 50px -30px; }
-  }
-
   /* About: paragraphs follow the photo one after another */
   .js .about__text > p {
     opacity: 0;
@@ -1618,5 +1605,223 @@ textarea {
     40% { translate: 5px 0; }
     60% { translate: -3px 0; }
     80% { translate: 2px 0; }
+  }
+}
+
+/* ==========================================================================
+   19. DAO-Inspired Motion (Orbital Point-Cloud Field, Film Grain, Ring Cursor)
+   ========================================================================== */
+:root {
+  --dao-cw: 22px;
+  --dao-ch: 22px;
+}
+
+/* Full-viewport orbital point-cloud canvas behind content */
+.dao-field {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.dao-field.is-ready {
+  opacity: 1;
+}
+
+/* Subtle monochrome film grain overlay */
+.dao-grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 350;
+  pointer-events: none;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="light"] .dao-grain {
+  opacity: 0.04;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="paused"]) .dao-grain {
+    animation: dao-grain-drift 750ms steps(2) infinite;
+  }
+
+  @keyframes dao-grain-drift {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-1.5%, 1%); }
+    100% { transform: translate(1%, -1%); }
+  }
+}
+
+/* Custom ring cursor + 6-layer motion-blur trail (fine pointers + motion enabled only) */
+.dao-ring,
+.dao-trail {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="paused"]) .dao-ring,
+  :root:not([data-motion="paused"]) .dao-trail {
+    display: block;
+  }
+
+  :root:not([data-motion="paused"]) body.dao-cursor-active,
+  :root:not([data-motion="paused"]) body.dao-cursor-active * {
+    cursor: none;
+  }
+
+  :root:not([data-motion="paused"]) body.dao-cursor-scroll {
+    --dao-cw: 22px;
+    --dao-ch: 36px;
+  }
+
+  .dao-ring {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 501;
+    pointer-events: none;
+    width: var(--dao-cw);
+    height: var(--dao-ch);
+    margin-left: calc(var(--dao-cw) / -2);
+    margin-top: calc(var(--dao-ch) / -2);
+    border: 1.5px solid var(--color-text);
+    border-radius: 999px;
+    opacity: 0;
+    will-change: transform;
+    transition:
+      opacity 260ms ease,
+      width 480ms cubic-bezier(0.3, 0.9, 0.3, 1),
+      height 480ms cubic-bezier(0.3, 0.9, 0.3, 1),
+      margin-left 480ms cubic-bezier(0.3, 0.9, 0.3, 1),
+      margin-top 480ms cubic-bezier(0.3, 0.9, 0.3, 1);
+  }
+
+  body.dao-cursor-active .dao-ring {
+    opacity: 0.92;
+  }
+
+  .dao-trail {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 500;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  body.dao-cursor-active .dao-trail {
+    opacity: 1;
+  }
+
+  .dao-trail i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    width: var(--dao-cw);
+    height: var(--dao-ch);
+    margin-left: calc(var(--dao-cw) / -2);
+    margin-top: calc(var(--dao-ch) / -2);
+    border: 1.5px solid var(--color-text);
+    border-radius: 999px;
+    will-change: transform;
+    transition:
+      width 480ms cubic-bezier(0.3, 0.9, 0.3, 1),
+      height 480ms cubic-bezier(0.3, 0.9, 0.3, 1),
+      margin-left 480ms cubic-bezier(0.3, 0.9, 0.3, 1),
+      margin-top 480ms cubic-bezier(0.3, 0.9, 0.3, 1);
+  }
+
+  .dao-trail i:nth-child(1) { opacity: 0.44; filter: blur(0.6px); }
+  .dao-trail i:nth-child(2) { opacity: 0.30; filter: blur(1.4px); }
+  .dao-trail i:nth-child(3) { opacity: 0.20; filter: blur(2.4px); }
+  .dao-trail i:nth-child(4) { opacity: 0.13; filter: blur(3.6px); }
+  .dao-trail i:nth-child(5) { opacity: 0.08; filter: blur(5px); }
+  .dao-trail i:nth-child(6) { opacity: 0.04; filter: blur(7px); }
+
+  /* Orbiting action triangle on interactive targets */
+  .dao-ring__orbit {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    transform: rotate(-45deg);
+  }
+
+  .dao-ring__orbit b {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    display: block;
+    width: 11px;
+    height: 8px;
+    translate: -50% calc(-100% - 2px);
+    transform-origin: 50% 50%;
+    scale: 0.3;
+    opacity: 0;
+    transition: scale 360ms cubic-bezier(0.3, 0.9, 0.3, 1), opacity 240ms ease;
+  }
+
+  .dao-ring__orbit b svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .dao-ring__orbit b path {
+    fill: var(--color-text);
+    stroke: var(--color-text);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+
+  body.dao-cursor-active.dao-cursor-on .dao-ring__orbit b {
+    scale: 1;
+    opacity: 1;
+  }
+
+  @keyframes dao-ring-orbit {
+    from { transform: rotate(-45deg); }
+    to { transform: rotate(315deg); }
+  }
+
+  body.dao-cursor-press .dao-ring__orbit {
+    animation: dao-ring-orbit 740ms cubic-bezier(0.42, 0.02, 0.24, 1);
+  }
+
+  /* Falling scroll dot while hovering the hero */
+  .dao-ring__fall {
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-text);
+    translate: -50% 0;
+    opacity: 0;
+  }
+
+  body.dao-cursor-scroll .dao-ring__fall {
+    animation: dao-scroll-fall 2.1s cubic-bezier(0.5, 0.05, 0.5, 1) infinite;
+  }
+
+  body.dao-cursor-scroll .dao-ring__orbit {
+    display: none;
+  }
+
+  @keyframes dao-scroll-fall {
+    0% { transform: translateY(0); opacity: 0; }
+    16% { opacity: 1; }
+    62% { transform: translateY(15px); opacity: 1; }
+    100% { transform: translateY(20px); opacity: 0; }
   }
 }
