@@ -49,11 +49,15 @@ const initSidebarToggle = () => {
 
 /**
  * Light/Dark theme toggle, persisted in localStorage.
- * Keeps the mobile topbar button and the desktop sidebar button in sync.
+ * Keeps the mobile topbar button, desktop sidebar button, <meta name="color-scheme">,
+ * and <meta name="theme-color"> in sync, and wraps toggles in a radial View Transition
+ * iris wipe when supported and motion is allowed.
  */
 const initThemeToggle = () => {
   const THEME_KEY = 'portfolio-theme';
   const rootEl = document.documentElement;
+  const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
   const toggles = [
     document.getElementById('theme-toggle'),
     document.getElementById('theme-toggle-desktop'),
@@ -66,28 +70,66 @@ const initThemeToggle = () => {
     rootEl.setAttribute('data-theme', theme);
     const isLight = theme === 'light';
 
+    if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', theme);
+    if (themeColorMeta) themeColorMeta.setAttribute('content', isLight ? '#f6f5f2' : '#0a0a0a');
+
     toggles.forEach((toggle) => {
       toggle.setAttribute('aria-pressed', String(isLight));
       toggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
     });
 
     if (desktopLabel) desktopLabel.textContent = isLight ? 'Light mode' : 'Dark mode';
+    window.dispatchEvent(new CustomEvent('portfolio:themechange', { detail: { theme } }));
   };
 
-  const storedTheme = localStorage.getItem(THEME_KEY);
+  let storedTheme = null;
+  try {
+    storedTheme = localStorage.getItem(THEME_KEY);
+  } catch (error) {
+    storedTheme = null;
+  }
   applyTheme(storedTheme === 'light' ? 'light' : 'dark');
 
   toggles.forEach((toggle) => {
-    toggle.addEventListener('click', () => {
+    toggle.addEventListener('click', (event) => {
       const nextTheme = rootEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      applyTheme(nextTheme);
+      const commit = () => {
+        applyTheme(nextTheme);
+        try {
+          localStorage.setItem(THEME_KEY, nextTheme);
+        } catch (error) {
+          /* localStorage unavailable; theme still applies for this session */
+        }
+      };
 
-      try {
-        localStorage.setItem(THEME_KEY, nextTheme);
-      } catch (error) {
-        /* localStorage unavailable; theme still applies for this session */
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const motionPaused = rootEl.getAttribute('data-motion') === 'paused';
+
+      if (!document.startViewTransition || reduceMotion || motionPaused) {
+        commit();
+        return;
       }
+
+      /* Radiate the iris wipe from the clicked button (or pointer coordinates) */
+      const rect = toggle.getBoundingClientRect();
+      const x = event.clientX || rect.left + rect.width * 0.5;
+      const y = event.clientY || rect.top + rect.height * 0.5;
+      const maxR = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      rootEl.style.setProperty('--theme-tx', `${x.toFixed(1)}px`);
+      rootEl.style.setProperty('--theme-ty', `${y.toFixed(1)}px`);
+      rootEl.style.setProperty('--theme-tr', `${Math.ceil(maxR)}px`);
+
+      document.startViewTransition(commit);
     });
+  });
+
+  window.addEventListener('storage', (event) => {
+    if (event.key !== THEME_KEY) return;
+    applyTheme(event.newValue === 'light' ? 'light' : 'dark');
   });
 };
 
@@ -556,6 +598,7 @@ const initDaoField = () => {
     raf: 0,
     lastTime: 0,
     elapsed: 0,
+    themeBlend: isLightTheme() ? 1 : 0,
   };
 
   /* Deterministic PRNG for a balanced, repeatable star & disc layout */
@@ -632,6 +675,30 @@ const initDaoField = () => {
     phase: rand() * Math.PI * 2,
   }));
 
+  /* Daylight Atelier: flowing harmonic contour ribbons & sunlit floating motes */
+  const ribbonCount = 11;
+  const daylightRibbons = Array.from({ length: ribbonCount }, (_, idx) => {
+    const frac = idx / (ribbonCount - 1);
+    return {
+      yBase: 0.14 + frac * 0.72,
+      amp: 16 + (idx % 3) * 11 + rand() * 8,
+      freq: 0.0022 + frac * 0.0014,
+      speed: 0.24 + (idx % 4) * 0.08,
+      phase: rand() * Math.PI * 2,
+      warm: idx % 3 === 1,
+      width: idx % 4 === 0 ? 1.25 : 0.85,
+      alpha: 0.085 + (1 - Math.abs(frac - 0.5) * 1.4) * 0.11,
+    };
+  });
+
+  const solarNodes = Array.from({ length: 7 }, (_, idx) => ({
+    ring: 0.62 + (idx % 3) * 0.34,
+    angle: (idx / 7) * Math.PI * 2 + rand() * 0.4,
+    speed: (idx % 2 === 0 ? 1 : -1) * (0.14 + rand() * 0.12),
+    radius: idx % 3 === 0 ? 3.2 : 2.1,
+    warm: idx % 2 === 0,
+  }));
+
   const resize = () => {
     state.dpr = Math.min(window.devicePixelRatio || 1, 2);
     state.w = window.innerWidth;
@@ -687,11 +754,24 @@ const initDaoField = () => {
     const fieldVis = 1 - easeB + easeB * arrive;
     if (fieldVis < 0.004) return;
 
-    const light = isLightTheme();
-    const rgbCore = light ? '236, 235, 232' : '10, 10, 10';
-    const rgbWarm = light ? '27, 27, 26' : '244, 240, 232';
-    const rgbCool = light ? '72, 72, 68' : '206, 212, 222';
-    const baseIntensity = (light ? 0.45 : 0.64) * fieldVis;
+    /* Smoothly morph between Dark Event Horizon (0) and Daylight Atelier (1) */
+    const targetTheme = isLightTheme() ? 1 : 0;
+    if (dt > 0) {
+      const step = Math.min(1, dt * 2.4);
+      state.themeBlend += (targetTheme - state.themeBlend) * step;
+      if (Math.abs(targetTheme - state.themeBlend) < 0.002) state.themeBlend = targetTheme;
+    } else {
+      state.themeBlend = targetTheme;
+    }
+    const tb = state.themeBlend;
+    const easeTheme = tb * tb * (3 - 2 * tb);
+    const darkWeight = 1 - easeTheme;
+    const lightWeight = easeTheme;
+
+    const rgbCore = '10, 10, 10';
+    const rgbWarm = '244, 240, 232';
+    const rgbCool = '206, 212, 222';
+    const baseIntensity = 0.64 * fieldVis * darkWeight;
     const intensity = baseIntensity * (1 + easeB * 0.36);
 
     const p = state.scrollShown;
@@ -772,144 +852,309 @@ const initDaoField = () => {
       return [fx, fy];
     };
 
-    /* 1. Outer atmospheric bloom halo */
-    const halo = ctx.createRadialGradient(
-      centerX,
-      centerY,
-      radiusScale * 0.42,
-      centerX,
-      centerY,
-      radiusScale * 1.55
-    );
-    halo.addColorStop(0, `rgba(${rgbWarm}, 0)`);
-    halo.addColorStop(0.22, `rgba(${rgbWarm}, ${(light ? 0.055 : 0.095).toFixed(3)})`);
-    halo.addColorStop(0.50, `rgba(${rgbWarm}, ${(light ? 0.02 : 0.036).toFixed(3)})`);
-    halo.addColorStop(1, `rgba(${rgbWarm}, 0)`);
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radiusScale * 1.55, 0, Math.PI * 2);
-    ctx.fill();
+    /* ======================================================================
+       DARK MODE WORLD: DAO Event Horizon (Keplerian Disc + Photon Ring)
+       ====================================================================== */
+    if (darkWeight > 0.005) {
+      /* 1. Outer atmospheric bloom halo */
+      const halo = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        radiusScale * 0.42,
+        centerX,
+        centerY,
+        radiusScale * 1.55
+      );
+      halo.addColorStop(0, `rgba(${rgbWarm}, 0)`);
+      halo.addColorStop(0.22, `rgba(${rgbWarm}, ${(0.095 * darkWeight * fieldVis).toFixed(3)})`);
+      halo.addColorStop(0.50, `rgba(${rgbWarm}, ${(0.036 * darkWeight * fieldVis).toFixed(3)})`);
+      halo.addColorStop(1, `rgba(${rgbWarm}, 0)`);
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radiusScale * 1.55, 0, Math.PI * 2);
+      ctx.fill();
 
-    /* 2. Deep-field ambient dust with gentle twinkle */
-    for (let i = 0; i < dustCount; i++) {
-      const d = dustParticles[i];
-      if (dt > 0) {
-        d.x = (d.x + d.vx * dt + 1) % 1;
-        d.y = (d.y + d.vy * dt + 1) % 1;
+      /* 2. Deep-field ambient dust with gentle twinkle */
+      for (let i = 0; i < dustCount; i++) {
+        const d = dustParticles[i];
+        if (dt > 0) {
+          d.x = (d.x + d.vx * dt + 1) % 1;
+          d.y = (d.y + d.vy * dt + 1) % 1;
+        }
+        const x = d.x * state.w + state.wakeX * 20 * d.depth;
+        const y = ((d.y * state.h - p * 80 * d.depth) % state.h + state.h) % state.h;
+        const twinkle = 0.72 + 0.28 * Math.sin(state.elapsed * 1.4 + d.phase);
+        ctx.fillStyle = `rgba(${rgbCool}, ${(d.alpha * twinkle * intensity * 0.78).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(x, y, d.size, 0, Math.PI * 2);
+        ctx.fill();
       }
-      const x = d.x * state.w + state.wakeX * 20 * d.depth;
-      const y = ((d.y * state.h - p * 80 * d.depth) % state.h + state.h) % state.h;
-      const twinkle = 0.72 + 0.28 * Math.sin(state.elapsed * 1.4 + d.phase);
-      ctx.fillStyle = `rgba(${rgbCool}, ${(d.alpha * twinkle * intensity * 0.78).toFixed(3)})`;
+
+      /* 3. Back half of the accretion disc (z <= 0, behind the core) */
+      for (let i = 0; i < discCount; i++) {
+        const pt = discParticles[i];
+        const a = pt.angle + pt.omega * (state.elapsed * 0.65 + spinBoost);
+        const proj = projectDisc(pt.r, a, pt.yOffset);
+        if (proj.z > 0) continue;
+
+        const [fx, fy] = applyWake(proj.x, proj.y);
+        const doppler = 0.78 + 0.34 * Math.sin(a);
+        const alpha = Math.min(0.85, pt.alpha * doppler * 0.68 * intensity * discFade);
+        const rgb = pt.warmth > 0.35 ? rgbWarm : rgbCool;
+
+        ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(fx, fy, pt.size * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      /* 4. Gravitationally lensed Einstein arcs (light bending over/under the shadow) */
+      for (let i = 0; i < lensArcCount; i++) {
+        const pt = lensArcParticles[i];
+        const sweep = pt.angle + Math.sin(state.elapsed * pt.omega * 0.45 + spinBoost * 0.4) * 0.28;
+        const lx = Math.sin(sweep) * pt.r;
+        const ly = pt.sign * Math.cos(sweep) * pt.r * (0.76 + (1 - Math.abs(tilt)) * 0.22);
+        const rx = (lx * cosRoll - ly * sinRoll) * radiusScale + centerX;
+        const ry = (lx * sinRoll + ly * cosRoll) * radiusScale + centerY;
+        const [fx, fy] = applyWake(rx, ry);
+
+        const archFade = Math.max(0, Math.cos(sweep));
+        const alpha = Math.min(0.75, pt.alpha * archFade * intensity * 0.85);
+        ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      /* 5. Event-horizon core shadow + subtle crisp photon ring edge */
+      const coreRadius = radiusScale * 0.50;
+      const coreGrad = ctx.createRadialGradient(centerX, centerY, coreRadius * 0.65, centerX, centerY, coreRadius * 1.08);
+      coreGrad.addColorStop(0, `rgba(${rgbCore}, ${(0.94 * darkWeight * fieldVis).toFixed(3)})`);
+      coreGrad.addColorStop(0.82, `rgba(${rgbCore}, ${(0.74 * darkWeight * fieldVis).toFixed(3)})`);
+      coreGrad.addColorStop(1, `rgba(${rgbCore}, 0)`);
+      ctx.fillStyle = coreGrad;
       ctx.beginPath();
-      ctx.arc(x, y, d.size, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, coreRadius * 1.08, 0, Math.PI * 2);
       ctx.fill();
-    }
 
-    /* 3. Back half of the accretion disc (z <= 0, behind the core) */
-    for (let i = 0; i < discCount; i++) {
-      const pt = discParticles[i];
-      const a = pt.angle + pt.omega * (state.elapsed * 0.65 + spinBoost);
-      const proj = projectDisc(pt.r, a, pt.yOffset);
-      if (proj.z > 0) continue;
-
-      const [fx, fy] = applyWake(proj.x, proj.y);
-      const doppler = 0.78 + 0.34 * Math.sin(a);
-      const alpha = Math.min(0.85, pt.alpha * doppler * 0.68 * intensity * discFade);
-      const rgb = pt.warmth > 0.35 ? rgbWarm : rgbCool;
-
-      ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+      ctx.strokeStyle = `rgba(${rgbWarm}, ${(0.22 * darkWeight * fieldVis).toFixed(3)})`;
+      ctx.lineWidth = 1.1;
       ctx.beginPath();
-      ctx.arc(fx, fy, pt.size * 0.9, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    /* 4. Gravitationally lensed Einstein arcs (light bending over/under the shadow) */
-    for (let i = 0; i < lensArcCount; i++) {
-      const pt = lensArcParticles[i];
-      const sweep = pt.angle + Math.sin(state.elapsed * pt.omega * 0.45 + spinBoost * 0.4) * 0.28;
-      const lx = Math.sin(sweep) * pt.r;
-      const ly = pt.sign * Math.cos(sweep) * pt.r * (0.76 + (1 - Math.abs(tilt)) * 0.22);
-      const rx = (lx * cosRoll - ly * sinRoll) * radiusScale + centerX;
-      const ry = (lx * sinRoll + ly * cosRoll) * radiusScale + centerY;
-      const [fx, fy] = applyWake(rx, ry);
-
-      const archFade = Math.max(0, Math.cos(sweep));
-      const alpha = Math.min(0.75, pt.alpha * archFade * intensity * 0.85);
-      ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
-      ctx.beginPath();
-      ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    /* 5. Event-horizon core shadow + subtle crisp photon ring edge */
-    const coreRadius = radiusScale * 0.50;
-    const coreGrad = ctx.createRadialGradient(centerX, centerY, coreRadius * 0.65, centerX, centerY, coreRadius * 1.08);
-    coreGrad.addColorStop(0, `rgba(${rgbCore}, ${light ? 0.86 : 0.94})`);
-    coreGrad.addColorStop(0.82, `rgba(${rgbCore}, ${light ? 0.58 : 0.74})`);
-    coreGrad.addColorStop(1, `rgba(${rgbCore}, 0)`);
-    ctx.fillStyle = coreGrad;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, coreRadius * 1.08, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = `rgba(${rgbWarm}, ${(light ? 0.14 : 0.22).toFixed(3)})`;
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, coreRadius * 1.02, 0, Math.PI * 2);
-    ctx.stroke();
-
-    /* 6. Relativistic orbital motion-streak strands */
-    ctx.lineCap = 'round';
-    for (let i = 0; i < strandCount; i++) {
-      const s = strands[i];
-      const a0 = s.angle + s.omega * (state.elapsed * 0.68 + spinBoost);
-      const arcLen = Math.min(0.52, s.baseArc * streakBoost);
-      const a1 = a0 - arcLen;
-      const p0 = projectDisc(s.r, a0, s.yOffset);
-      const pMid = projectDisc(s.r, (a0 + a1) * 0.5, s.yOffset);
-      const p1 = projectDisc(s.r, a1, s.yOffset);
-
-      const alpha = Math.min(0.65, s.alpha * (p0.z > 0 ? 1 : 0.52) * intensity * discFade * (0.9 + state.scrollVel * 0.35));
-      ctx.strokeStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
-      ctx.lineWidth = s.width;
-      ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.quadraticCurveTo(pMid.x, pMid.y, p1.x, p1.y);
+      ctx.arc(centerX, centerY, coreRadius * 1.02, 0, Math.PI * 2);
       ctx.stroke();
+
+      /* 6. Relativistic orbital motion-streak strands */
+      ctx.lineCap = 'round';
+      for (let i = 0; i < strandCount; i++) {
+        const s = strands[i];
+        const a0 = s.angle + s.omega * (state.elapsed * 0.68 + spinBoost);
+        const arcLen = Math.min(0.52, s.baseArc * streakBoost);
+        const a1 = a0 - arcLen;
+        const p0 = projectDisc(s.r, a0, s.yOffset);
+        const pMid = projectDisc(s.r, (a0 + a1) * 0.5, s.yOffset);
+        const p1 = projectDisc(s.r, a1, s.yOffset);
+
+        const alpha = Math.min(0.65, s.alpha * (p0.z > 0 ? 1 : 0.52) * intensity * discFade * (0.9 + state.scrollVel * 0.35));
+        ctx.strokeStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
+        ctx.lineWidth = s.width;
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.quadraticCurveTo(pMid.x, pMid.y, p1.x, p1.y);
+        ctx.stroke();
+      }
+
+      /* 7. Luminous photon ring particles */
+      for (let i = 0; i < ringCount; i++) {
+        const pt = ringParticles[i];
+        const a = pt.angle + pt.omega * (state.elapsed * 0.48 + spinBoost * 0.55);
+        const rx = Math.cos(a) * pt.r * radiusScale + centerX;
+        const ry = Math.sin(a) * pt.r * radiusScale + centerY;
+        const [fx, fy] = applyWake(rx, ry);
+
+        const alpha = Math.min(0.95, pt.alpha * intensity * ringBoost);
+        ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      /* 8. Front half of the accretion disc (z > 0, sweeping across the core) */
+      for (let i = 0; i < discCount; i++) {
+        const pt = discParticles[i];
+        const a = pt.angle + pt.omega * (state.elapsed * 0.65 + spinBoost);
+        const proj = projectDisc(pt.r, a, pt.yOffset);
+        if (proj.z <= 0) continue;
+
+        const [fx, fy] = applyWake(proj.x, proj.y);
+        const doppler = 0.84 + 0.36 * Math.sin(a);
+        const alpha = Math.min(0.94, pt.alpha * doppler * intensity * discFade);
+        const rgb = pt.warmth > 0.3 ? rgbWarm : rgbCool;
+
+        ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(fx, fy, pt.size * 1.08, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
-    /* 7. Luminous photon ring particles */
-    for (let i = 0; i < ringCount; i++) {
-      const pt = ringParticles[i];
-      const a = pt.angle + pt.omega * (state.elapsed * 0.48 + spinBoost * 0.55);
-      const rx = Math.cos(a) * pt.r * radiusScale + centerX;
-      const ry = Math.sin(a) * pt.r * radiusScale + centerY;
-      const [fx, fy] = applyWake(rx, ry);
+    /* ======================================================================
+       LIGHT MODE WORLD: Daylight Atelier (Harmonic Silk Ribbons + Solar Astrolabe)
+       ====================================================================== */
+    if (lightWeight > 0.005) {
+      const lw = lightWeight * fieldVis;
+      const inkRgb = '28, 27, 25';
+      const goldRgb = '178, 132, 64';
+      const skyRgb = '132, 148, 166';
 
-      const alpha = Math.min(0.95, pt.alpha * intensity * ringBoost);
-      ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
+      /* 1. Warm sunlit atmospheric wash */
+      const sunHalo = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        radiusScale * 0.1,
+        centerX,
+        centerY,
+        radiusScale * 2.1
+      );
+      sunHalo.addColorStop(0, `rgba(255, 247, 232, ${(0.55 * lw).toFixed(3)})`);
+      sunHalo.addColorStop(0.45, `rgba(${goldRgb}, ${(0.075 * lw).toFixed(3)})`);
+      sunHalo.addColorStop(1, 'rgba(255, 247, 232, 0)');
+      ctx.fillStyle = sunHalo;
       ctx.beginPath();
-      ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, radiusScale * 2.1, 0, Math.PI * 2);
       ctx.fill();
-    }
 
-    /* 8. Front half of the accretion disc (z > 0, sweeping across the core) */
-    for (let i = 0; i < discCount; i++) {
-      const pt = discParticles[i];
-      const a = pt.angle + pt.omega * (state.elapsed * 0.65 + spinBoost);
-      const proj = projectDisc(pt.r, a, pt.yOffset);
-      if (proj.z <= 0) continue;
+      /* 2. Flowing topographic silk contour ribbons that part gently around the pointer */
+      const ribbonSteps = state.w >= 1024 ? 36 : 22;
+      const dxStep = state.w / ribbonSteps;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      for (let r = 0; r < ribbonCount; r++) {
+        const rb = daylightRibbons[r];
+        const baseY = rb.yBase * state.h - p * 44 * (0.4 + r * 0.06);
+        const waveAmp = rb.amp * (1 + state.scrollVel * 0.35 + easeB * 0.35);
+        const phase = rb.phase + state.elapsed * rb.speed + p * 2.4 + easeB * introP * 4.2;
 
-      const [fx, fy] = applyWake(proj.x, proj.y);
-      const doppler = 0.84 + 0.36 * Math.sin(a);
-      const alpha = Math.min(0.94, pt.alpha * doppler * intensity * discFade);
-      const rgb = pt.warmth > 0.3 ? rgbWarm : rgbCool;
+        ctx.beginPath();
+        for (let s = 0; s <= ribbonSteps; s++) {
+          const x = s * dxStep;
+          let y =
+            baseY +
+            Math.sin(x * rb.freq + phase) * waveAmp +
+            Math.cos(x * rb.freq * 0.52 - phase * 0.7) * (waveAmp * 0.42);
 
-      ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
+          if (state.pointerActive) {
+            const pdx = x - state.pointerX;
+            const pdy = y - state.pointerY;
+            const dSq = pdx * pdx + pdy * pdy;
+            if (dSq < 48400) {
+              const dist = Math.sqrt(dSq);
+              const pull = Math.pow(1 - dist / 220, 2) * 34;
+              y += (pdy >= 0 ? 1 : -1) * pull;
+            }
+          }
+
+          if (s === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        const rgb = rb.warm ? goldRgb : (r % 2 === 0 ? inkRgb : skyRgb);
+        ctx.strokeStyle = `rgba(${rgb}, ${(rb.alpha * lw).toFixed(3)})`;
+        ctx.lineWidth = rb.width;
+        ctx.stroke();
+      }
+
+      /* 3. Architectural Solar Astrolabe (concentric drafting rings + degree ticks + orbiting nodes) */
+      const astroR = radiusScale * (1.06 + easeB * (0.14 - collapsePhase * 0.16));
+      const rot = state.elapsed * 0.11 + p * 1.4 + easeB * introP * 2.6;
+
+      /* Outer fine dial + radial degree ticks */
+      ctx.save();
+      ctx.translate(centerX, centerY);
+
+      ctx.strokeStyle = `rgba(${inkRgb}, ${(0.11 * lw).toFixed(3)})`;
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(fx, fy, pt.size * 1.08, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.arc(0, 0, astroR * 1.18, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const tickCount = 60;
+      for (let i = 0; i < tickCount; i++) {
+        const a = (i / tickCount) * Math.PI * 2 + rot * 0.35;
+        const major = i % 5 === 0;
+        const r0 = astroR * (major ? 1.13 : 1.155);
+        const r1 = astroR * 1.18;
+        ctx.strokeStyle = `rgba(${major ? goldRgb : inkRgb}, ${((major ? 0.28 : 0.10) * lw).toFixed(3)})`;
+        ctx.lineWidth = major ? 1.1 : 0.7;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * r0, Math.sin(a) * r0);
+        ctx.lineTo(Math.cos(a) * r1, Math.sin(a) * r1);
+        ctx.stroke();
+      }
+
+      /* Middle dashed orbital track */
+      ctx.save();
+      ctx.rotate(-rot * 0.6);
+      ctx.setLineDash([4, 9]);
+      ctx.strokeStyle = `rgba(${goldRgb}, ${(0.24 * lw).toFixed(3)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(0, 0, astroR * 0.88, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      /* Inner architectural meridian ellipse */
+      ctx.save();
+      ctx.rotate(roll * 0.9 + rot * 0.25);
+      ctx.strokeStyle = `rgba(${inkRgb}, ${(0.12 * lw).toFixed(3)})`;
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, astroR * 0.96, astroR * (0.34 + Math.abs(tilt) * 0.4), 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = `rgba(${goldRgb}, ${(0.16 * lw).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, astroR * 0.62, astroR * 0.62, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      /* Orbiting celestial nodes */
+      for (let i = 0; i < solarNodes.length; i++) {
+        const n = solarNodes[i];
+        const a = n.angle + state.elapsed * n.speed + p * 1.6 + easeB * introP * 3.0;
+        const nx = Math.cos(a) * astroR * n.ring;
+        const ny = Math.sin(a) * astroR * n.ring;
+
+        ctx.fillStyle = `rgba(${n.warm ? goldRgb : inkRgb}, ${(0.48 * lw).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(nx, ny, n.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (n.warm) {
+          ctx.strokeStyle = `rgba(${goldRgb}, ${(0.22 * lw).toFixed(3)})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.arc(nx, ny, n.radius + 4.5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+
+      /* 4. Sunlit buoyant floating motes */
+      for (let i = 0; i < Math.min(48, dustCount); i++) {
+        const d = dustParticles[i];
+        if (darkWeight <= 0.005 && dt > 0) {
+          d.x = (d.x + d.vx * dt + 1) % 1;
+          d.y = (d.y - Math.abs(d.vy) * dt * 1.3 + 1) % 1;
+        }
+        const x = d.x * state.w + state.wakeX * 16 * d.depth;
+        const y = ((d.y * state.h - p * 55 * d.depth) % state.h + state.h) % state.h;
+        const shimmer = 0.6 + 0.4 * Math.sin(state.elapsed * 1.2 + d.phase);
+        const rgb = i % 2 === 0 ? goldRgb : inkRgb;
+        ctx.fillStyle = `rgba(${rgb}, ${(d.alpha * shimmer * 0.58 * lw).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(x, y, d.size * 1.15, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
   };
 
@@ -993,6 +1238,9 @@ const initDaoField = () => {
     if (reduceMotion()) renderFrame(0);
   });
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('portfolio:themechange', () => {
+    if (reduceMotion()) renderFrame(0);
+  });
 };
 
 /**

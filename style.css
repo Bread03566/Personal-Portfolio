@@ -2,6 +2,8 @@
    1. CSS Custom Properties
    ========================================================================== */
 :root {
+  color-scheme: light dark;
+
   /* Monochrome palette (dark theme default) */
   --color-bg: #0a0a0a;
   --color-surface: #111111;
@@ -44,23 +46,36 @@
   /* Motion */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
+
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 :root[data-theme="light"] {
-  /* Soft, slightly warm off-white instead of pure white to reduce glare */
-  --color-bg: #ecebe8;
-  --color-surface: #f5f4f1;
-  --color-surface-alt: #e3e2de;
-  --color-border: #d0cfca;
-  --color-text: #1b1b1a;
-  --color-text-muted: #5c5c58;
-  --color-inverse-bg: #1b1b1a;
-  --color-inverse-text: #f5f4f1;
-  --color-glow: rgba(0, 0, 0, 0.04);
-  --color-glow-strong: rgba(0, 0, 0, 0.065);
-  --color-surface-glass: rgba(245, 244, 241, 0.80);
-  --color-glass-lip: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --color-light-pool: rgba(27, 27, 26, 0.055);
+  color-scheme: light;
+  /* Daylight Atelier: crisp warm alabaster ground, pure elevated surfaces, deep archival ink */
+  --color-bg: #f6f5f2;
+  --color-surface: #ffffff;
+  --color-surface-alt: #efede7;
+  --color-border: #e1ded6;
+  --color-text: #141413;
+  --color-text-muted: #5a5954;
+  --color-inverse-bg: #141413;
+  --color-inverse-text: #faf9f6;
+  --color-glow: rgba(20, 20, 19, 0.03);
+  --color-glow-strong: rgba(180, 134, 68, 0.085);
+  --color-surface-glass: rgba(255, 255, 255, 0.80);
+  --color-glass-lip: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 1px 3px rgba(20, 20, 19, 0.045);
+  --color-light-pool: rgba(196, 152, 86, 0.13);
 }
 
 /* ==========================================================================
@@ -2371,4 +2386,136 @@ textarea {
 
 :root[data-motion="paused"] .dao-intro {
   display: none !important;
+}
+
+/* ==========================================================================
+   22. Daylight Atelier Theme Polish & Radial View Transition
+   ========================================================================== */
+:root[data-theme="light"] body {
+  background-image: radial-gradient(rgba(20, 20, 19, 0.085) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+:root[data-theme="light"] .dao-grain {
+  opacity: 0.018;
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme="light"] .topbar,
+:root[data-theme="light"] .sidebar,
+:root[data-theme="light"] .site-footer {
+  background-color: rgba(255, 255, 255, 0.84);
+  border-color: var(--color-border);
+}
+
+:root[data-theme="light"] .project-card,
+:root[data-theme="light"] .contact-card,
+:root[data-theme="light"] .contact-form {
+  background-color: rgba(255, 255, 255, 0.88);
+  border-color: var(--color-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 10px -4px rgba(20, 20, 19, 0.06);
+}
+
+:root[data-theme="light"] .project-card::after {
+  background: linear-gradient(90deg, transparent, rgba(180, 134, 68, 0.75), transparent);
+}
+
+:root[data-theme="light"] .skill-group__tags li {
+  background-color: rgba(255, 255, 255, 0.82);
+  border-color: var(--color-border);
+}
+
+:root[data-theme="light"] .skill-group__tags li:hover {
+  background-color: #ffffff;
+  border-color: var(--color-text);
+  box-shadow: 0 6px 16px -10px rgba(20, 20, 19, 0.18);
+}
+
+:root[data-theme="light"] .btn--secondary {
+  background-color: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme="light"] .btn--secondary:hover {
+  background-color: #ffffff;
+}
+
+:root[data-theme="light"] .to-top {
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px -12px rgba(20, 20, 19, 0.22);
+}
+
+/* Distinct buoyant paper-lift hover motion in Light Mode */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :root[data-theme="light"]:not([data-motion="paused"]) .project-card {
+    transition:
+      transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color var(--transition-fast),
+      box-shadow 340ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color var(--transition-base);
+  }
+
+  :root[data-theme="light"]:not([data-motion="paused"]) .project-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(20, 20, 19, 0.28);
+    background-color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      0 22px 44px -22px rgba(20, 20, 19, 0.18),
+      0 6px 14px -6px rgba(20, 20, 19, 0.06);
+  }
+
+  :root[data-theme="light"]:not([data-motion="paused"]) .contact-card:hover {
+    transform: translateY(-3px);
+    background-color: #ffffff;
+    box-shadow: 0 14px 30px -18px rgba(20, 20, 19, 0.16);
+  }
+}
+
+/* Clean frosted daylight dialog backdrop */
+:root[data-theme="light"] .aces-dialog {
+  background-color: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 28px 64px -24px rgba(20, 20, 19, 0.24);
+}
+
+:root[data-theme="light"] :is(.aces-dialog[open]):where(:not([data-closing]))::backdrop {
+  background-color: rgba(20, 20, 19, 0.32);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Radial View Transition iris wipe when switching Dark <-> Light */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  animation: theme-iris-in 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes theme-iris-in {
+  from {
+    clip-path: circle(0px at var(--theme-tx, 50%) var(--theme-ty, 50%));
+  }
+  to {
+    clip-path: circle(var(--theme-tr, 150vmax) at var(--theme-tx, 50%) var(--theme-ty, 50%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

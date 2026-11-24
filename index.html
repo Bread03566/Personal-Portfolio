@@ -4,7 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bench Ivan Canzana | Aspiring Software Engineer</title>
+  <meta name="color-scheme" content="dark light">
   <meta name="theme-color" content="#0a0a0a">
+  <script>
+    (function () {
+      var theme = 'dark';
+      try {
+        if (localStorage.getItem('portfolio-theme') === 'light') theme = 'light';
+      } catch (e) {
+        theme = 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+      var cs = document.querySelector('meta[name="color-scheme"]');
+      if (cs) cs.content = theme;
+      var tc = document.querySelector('meta[name="theme-color"]');
+      if (tc) tc.content = theme === 'light' ? '#f6f5f2' : '#0a0a0a';
+    })();
+  </script>
   <meta name="description" content="Portfolio of Bench Ivan Canzana, an aspiring software engineer building practical web and Python projects.">
 
   <link rel="canonical" href="https://bread03566.github.io/Personal-Portfolio/">
@@ -60,7 +76,7 @@
       }
     }, 3000);
   </script>
-  <link rel="stylesheet" href="./style.css?v=22">
+  <link rel="stylesheet" href="./style.css?v=23">
 </head>
 <body>
 
@@ -564,6 +580,6 @@
     </svg>
   </button>
 
-  <script src="./script.js?v=22"></script>
+  <script src="./script.js?v=23"></script>
 </body>
 </html>
