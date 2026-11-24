@@ -1430,8 +1430,8 @@ const initCardSpotlight = () => {
     window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
     document.documentElement.getAttribute('data-motion') === 'paused';
 
-  document.querySelectorAll('.project-card, .contact-card').forEach((card) => {
-    const isProject = card.classList.contains('project-card');
+  document.querySelectorAll('.project-card, .cert-card, .contact-card').forEach((card) => {
+    const isTiltCard = card.classList.contains('project-card') || card.classList.contains('cert-card');
 
     card.addEventListener('pointermove', (event) => {
       const rect = card.getBoundingClientRect();
@@ -1440,7 +1440,7 @@ const initCardSpotlight = () => {
       card.style.setProperty('--mx', `${x}px`);
       card.style.setProperty('--my', `${y}px`);
 
-      if (isProject && !isTiltDisabled()) {
+      if (isTiltCard && !isTiltDisabled()) {
         const nx = (x / rect.width - 0.5) * 2;
         const ny = (y / rect.height - 0.5) * 2;
         card.style.setProperty('--rx', `${(-ny * 4.5).toFixed(2)}deg`);
@@ -1448,7 +1448,7 @@ const initCardSpotlight = () => {
       }
     });
 
-    if (isProject) {
+    if (isTiltCard) {
       card.addEventListener('pointerleave', () => {
         card.style.setProperty('--rx', '0deg');
         card.style.setProperty('--ry', '0deg');
@@ -1644,6 +1644,71 @@ const closeTopLayerDialog = async (dialog) => {
     dialog.removeAttribute('data-closing');
   }
   dialog.close();
+};
+
+/**
+ * Certificate preview dialog: opens PDF or image certificates inside the
+ * native top-layer <dialog> and restores focus to the trigger on close.
+ */
+const initCertDialog = () => {
+  const dialog = document.getElementById('cert-dialog');
+  const closeBtn = document.getElementById('cert-close');
+  const titleEl = document.getElementById('cert-dialog-title');
+  const subEl = document.getElementById('cert-dialog-sub');
+  const imgEl = document.getElementById('cert-image');
+  const frameEl = document.getElementById('cert-frame');
+  const openTabEl = document.getElementById('cert-open-tab');
+  const triggers = document.querySelectorAll('[data-cert-open]');
+
+  if (!dialog || !closeBtn || !titleEl || !imgEl || !frameEl || triggers.length === 0 || typeof dialog.showModal !== 'function') {
+    return;
+  }
+
+  let activeTrigger = null;
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      activeTrigger = trigger;
+      const title = trigger.dataset.certTitle || 'Certificate';
+      const issuer = trigger.dataset.certIssuer || '';
+      const src = trigger.dataset.certSrc || '';
+      const type = trigger.dataset.certType || 'image';
+
+      titleEl.textContent = title;
+      if (subEl) subEl.textContent = issuer;
+      if (openTabEl) openTabEl.href = src;
+
+      if (type === 'pdf') {
+        imgEl.hidden = true;
+        imgEl.removeAttribute('src');
+        frameEl.hidden = false;
+        frameEl.src = src;
+        frameEl.title = `${title} PDF preview`;
+      } else {
+        frameEl.hidden = true;
+        frameEl.removeAttribute('src');
+        imgEl.hidden = false;
+        imgEl.src = src;
+        imgEl.alt = `${title} certificate`;
+      }
+
+      openTopLayerDialog(dialog);
+    });
+  });
+
+  closeBtn.addEventListener('click', () => closeTopLayerDialog(dialog));
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) closeTopLayerDialog(dialog);
+  });
+  dialog.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeTopLayerDialog(dialog);
+  });
+  dialog.addEventListener('close', () => {
+    frameEl.removeAttribute('src');
+    syncDialogCursorState();
+    if (activeTrigger) activeTrigger.focus();
+  });
 };
 
 /**
@@ -1901,5 +1966,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initFooterYear();
   initContactForm();
   initBackToTop();
+  initCertDialog();
   initProjectDialogs();
 });
