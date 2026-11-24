@@ -40,12 +40,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script>
     document.documentElement.classList.add('js');
+    (function () {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var hasHash = Boolean(window.location.hash && window.location.hash !== '#home');
+      var paused = false;
+      try {
+        paused = localStorage.getItem('portfolio-motion') === 'paused';
+      } catch (e) {
+        paused = false;
+      }
+      if (!reduce && !hasHash && !paused) {
+        document.documentElement.classList.add('intro-active');
+      }
+    })();
     /* Failsafe: if the main script never starts, show all content instead of leaving it hidden. */
     setTimeout(function () {
-      if (!window.__motionReady) document.documentElement.classList.remove('js');
+      if (!window.__motionReady) {
+        document.documentElement.classList.remove('js', 'intro-active');
+      }
     }, 3000);
   </script>
-  <link rel="stylesheet" href="./style.css?v=21">
+  <link rel="stylesheet" href="./style.css?v=22">
 </head>
 <body>
 
@@ -60,6 +75,38 @@
     <i class="dao-ring__fall"></i>
     <i class="dao-ring__orbit"><b><svg viewBox="0 0 13 10" aria-hidden="true"><path d="M6.5 2.1 11.1 8.4H1.9z"/></svg></b></i>
   </div>
+
+  <section class="dao-intro" id="dao-intro" aria-label="Portfolio intro">
+    <div class="dao-intro__rail" aria-hidden="true">
+      <span>BENCH IVAN CANZANA &mdash; SOFTWARE ENGINEER</span>
+    </div>
+
+    <button type="button" class="dao-intro__skip" id="intro-skip">Skip intro</button>
+
+    <div class="dao-intro__center" id="dao-intro-center">
+      <p class="dao-intro__eyebrow">Portfolio</p>
+      <div class="dao-intro__mark" aria-hidden="true">
+        <svg viewBox="0 0 360 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 14h40c16 0 27 8.4 27 21.8 0 9.1-5.2 15.8-13.8 18.9 10.8 2.7 17.6 10.4 17.6 21.7 0 14.7-11.8 22.6-29.5 22.6H24V14Zm17.5 34.2h21.8c8.3 0 13.4-3.9 13.4-10.6s-5.1-10.1-13.4-10.1H41.5v20.7Zm0 37.3h24.2c9.2 0 14.7-4.1 14.7-11.4 0-7.2-5.5-11.3-14.7-11.3H41.5v22.7Z" fill="currentColor"/>
+          <path d="M161 14h38v14h-10.5v57H199v14h-38V85h10.5V28H161V14Z" fill="currentColor"/>
+          <path d="M306.5 100.5c-25.2 0-43.5-18.3-43.5-44.5s18.3-44.5 43.5-44.5c13.5 0 24.8 5.2 32.3 14.4l-12.8 10.3c-5.1-6-11.7-9.4-19.5-9.4-15.1 0-25.6 11.5-25.6 29.2s10.5 29.2 25.6 29.2c7.9 0 14.6-3.5 19.7-9.8l12.8 10.3c-7.5 9.4-18.9 14.8-32.5 14.8Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <p class="dao-intro__name">Bench Ivan Canzana</p>
+    </div>
+
+    <div class="dao-intro__index" aria-hidden="true">
+      <span class="dao-intro__track"><span class="dao-intro__track-fill" id="intro-progress-bar"></span></span>
+      <div class="dao-intro__digits">
+        <b id="intro-percent">00</b><i>/ 100</i>
+      </div>
+    </div>
+
+    <div class="dao-intro__cue" id="intro-cue" aria-hidden="true">
+      <span class="dao-intro__capsule"><i></i></span>
+      <span class="dao-intro__cue-text">Scroll to enter</span>
+    </div>
+  </section>
 
   <div class="layout">
 
@@ -517,6 +564,6 @@
     </svg>
   </button>
 
-  <script src="./script.js?v=21"></script>
+  <script src="./script.js?v=22"></script>
 </body>
 </html>

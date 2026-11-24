@@ -270,6 +270,251 @@ const initMotionToggle = () => {
 };
 
 /**
+ * Shared state between the DAO-style scroll-scrubbed intro and the Event Horizon canvas.
+ * Kept module-scoped without polluting the global namespace.
+ */
+const daoIntroState = {
+  active: false,
+  target: 0,
+  shown: 0,
+  vel: 0,
+  blend: 0,
+};
+
+/**
+ * DAO-style scroll-scrubbed intro sequence:
+ *  - Opens on a pure void with a centered geometric mark.
+ *  - Multi-scroll spring physics (critically damped, frame-rate independent)
+ *    scrub the Event Horizon through bloom -> orbit -> collapse -> handoff.
+ *  - Supports desktop wheel, mobile vertical swipe with flick momentum,
+ *    keyboard navigation, and a Skip intro button.
+ *  - Automatically bypassed for reduced motion, paused motion, or hash links.
+ */
+const initDaoIntro = () => {
+  const introEl = document.getElementById('dao-intro');
+  const centerEl = document.getElementById('dao-intro-center');
+  const percentEl = document.getElementById('intro-percent');
+  const barEl = document.getElementById('intro-progress-bar');
+  const cueEl = document.getElementById('intro-cue');
+  const skipBtn = document.getElementById('intro-skip');
+  const rootEl = document.documentElement;
+
+  const shouldRun =
+    Boolean(introEl) &&
+    rootEl.classList.contains('intro-active') &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+    rootEl.getAttribute('data-motion') !== 'paused';
+
+  const markDone = (instant = false) => {
+    daoIntroState.active = false;
+    daoIntroState.target = 1;
+    daoIntroState.shown = 1;
+    daoIntroState.vel = 0;
+    if (instant) daoIntroState.blend = 0;
+
+    rootEl.classList.remove('intro-active');
+    if (introEl) {
+      introEl.classList.add('is-done');
+      introEl.setAttribute('aria-hidden', 'true');
+      introEl.inert = true;
+    }
+    window.dispatchEvent(new CustomEvent('portfolio:introcomplete'));
+  };
+
+  if (!shouldRun) {
+    markDone(true);
+    return;
+  }
+
+  daoIntroState.active = true;
+  daoIntroState.target = 0;
+  daoIntroState.shown = 0;
+  daoIntroState.vel = 0;
+  daoIntroState.blend = 1;
+
+  const INTRO_PULL = 840;
+  const INTRO_GATE = 0.84;
+  const INTRO_GRIP = 0.38;
+  const SPRING_W0 = 10;
+  const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+  let raf = 0;
+  let lastTime = 0;
+
+  const paintIntro = () => {
+    const p = daoIntroState.shown;
+    if (percentEl) {
+      const pct = Math.min(100, Math.round(p * 100));
+      percentEl.textContent = String(pct).padStart(2, '0');
+    }
+    if (barEl) {
+      barEl.style.transform = `scaleX(${p.toFixed(4)})`;
+    }
+    if (cueEl) {
+      cueEl.classList.toggle('is-hidden', daoIntroState.target >= 0.035);
+    }
+    if (centerEl) {
+      /* Stay crisp through bloom & orbit, then gently dissolve during the collapse */
+      const fade = clamp01((1 - p) / (1 - 0.80));
+      const scale = 1 + (1 - fade) * 0.07;
+      centerEl.style.opacity = fade.toFixed(3);
+      centerEl.style.transform = `scale(${scale.toFixed(4)})`;
+    }
+  };
+
+  const finishIntro = (instant = false) => {
+    if (!daoIntroState.active) return;
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+    window.scrollTo(0, 0);
+    markDone(instant);
+  };
+
+  const stepSpring = (now) => {
+    raf = 0;
+    if (!daoIntroState.active) return;
+
+    const dt = lastTime ? Math.min(0.05, (now - lastTime) / 1000) : 0.016;
+    lastTime = now;
+
+    const diff = daoIntroState.target - daoIntroState.shown;
+    if (Math.abs(diff) > 0.0004 || Math.abs(daoIntroState.vel) > 0.0004) {
+      daoIntroState.vel += (SPRING_W0 * SPRING_W0 * diff - 2 * SPRING_W0 * daoIntroState.vel) * dt;
+      daoIntroState.shown += daoIntroState.vel * dt;
+      if (daoIntroState.shown < 0) {
+        daoIntroState.shown = 0;
+        daoIntroState.vel = 0;
+      }
+      if (daoIntroState.shown > 1) {
+        daoIntroState.shown = 1;
+        daoIntroState.vel = 0;
+      }
+      paintIntro();
+      if (daoIntroState.shown >= 0.992) {
+        finishIntro(false);
+        return;
+      }
+      raf = requestAnimationFrame(stepSpring);
+    } else {
+      daoIntroState.vel = 0;
+      lastTime = 0;
+      paintIntro();
+    }
+  };
+
+  const wakeSpring = () => {
+    if (!raf && daoIntroState.active) {
+      lastTime = 0;
+      raf = requestAnimationFrame(stepSpring);
+    }
+  };
+
+  const advance = (delta, pull = INTRO_PULL) => {
+    if (!daoIntroState.active) return;
+    let step = delta / pull;
+    if (daoIntroState.target > INTRO_GATE || daoIntroState.target + step > INTRO_GATE) {
+      step *= INTRO_GRIP;
+    }
+    daoIntroState.target = clamp01(daoIntroState.target + step);
+    if (cueEl && daoIntroState.target >= 0.035) {
+      cueEl.classList.add('is-hidden');
+    }
+    wakeSpring();
+  };
+
+  window.addEventListener(
+    'wheel',
+    (event) => {
+      if (!daoIntroState.active) return;
+      event.preventDefault();
+      let d = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      if (event.deltaMode === 1) d *= 28;
+      else if (event.deltaMode === 2) d *= 320;
+      advance(d, INTRO_PULL);
+    },
+    { passive: false }
+  );
+
+  let touchState = null;
+  const touchPull = () => Math.max(window.innerHeight, 560) * 1.85;
+
+  window.addEventListener(
+    'touchstart',
+    (event) => {
+      if (!daoIntroState.active || event.touches.length > 1) {
+        touchState = null;
+        return;
+      }
+      if (event.target && event.target.closest && event.target.closest('button, a')) {
+        touchState = null;
+        return;
+      }
+      const t = event.touches[0];
+      touchState = { y: t.clientY, t: performance.now(), vy: 0 };
+    },
+    { passive: true }
+  );
+
+  window.addEventListener(
+    'touchmove',
+    (event) => {
+      if (!daoIntroState.active || !touchState) return;
+      event.preventDefault();
+      const t = event.touches[0];
+      const now = performance.now();
+      const dy = touchState.y - t.clientY;
+      touchState.vy = 0.7 * touchState.vy + 0.3 * (dy / Math.max(1, now - touchState.t));
+      touchState.y = t.clientY;
+      touchState.t = now;
+      advance(dy, touchPull());
+    },
+    { passive: false }
+  );
+
+  window.addEventListener(
+    'touchend',
+    () => {
+      if (!daoIntroState.active || !touchState) return;
+      const g = touchState;
+      touchState = null;
+      if (performance.now() - g.t < 90) {
+        advance(Math.max(-2.5, Math.min(2.5, g.vy)) * 200, touchPull());
+      }
+    },
+    { passive: true }
+  );
+
+  window.addEventListener('keydown', (event) => {
+    if (!daoIntroState.active) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      finishIntro(false);
+    } else if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
+      if (event.target && event.target.closest && event.target.closest('button, a')) return;
+      event.preventDefault();
+      advance(210, INTRO_PULL);
+    } else if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+      event.preventDefault();
+      advance(-210, INTRO_PULL);
+    }
+  });
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', () => finishIntro(false));
+  }
+
+  window.addEventListener('portfolio:motionchange', (event) => {
+    if (event.detail && event.detail.paused && daoIntroState.active) {
+      finishIntro(true);
+    }
+  });
+
+  paintIntro();
+};
+
+/**
  * DAO-inspired Event Horizon orbital point-cloud field.
  * Pure vanilla HTML5 Canvas 2D featuring:
  *  - Tilted 3D Keplerian accretion disc with front/back depth sorting
@@ -427,30 +672,68 @@ const initDaoField = () => {
 
     ctx.clearRect(0, 0, state.w, state.h);
 
+    /* Smoothly glide from intro center to resting portfolio position after handoff */
+    if (!daoIntroState.active && daoIntroState.blend > 0 && dt > 0) {
+      daoIntroState.blend = Math.max(0, daoIntroState.blend - dt * 1.15);
+    }
+    const rawB = daoIntroState.blend;
+    const easeB = rawB * rawB * (3 - 2 * rawB);
+    const introP = daoIntroState.shown;
+
+    /* Front-loaded arrival: pure void at t=0, blooms immediately on the first scroll nudge */
+    const arrive = daoIntroState.active
+      ? Math.pow(Math.min(1, Math.max(0, daoIntroState.target / 0.08)), 0.55)
+      : 1;
+    const fieldVis = 1 - easeB + easeB * arrive;
+    if (fieldVis < 0.004) return;
+
     const light = isLightTheme();
     const rgbCore = light ? '236, 235, 232' : '10, 10, 10';
     const rgbWarm = light ? '27, 27, 26' : '244, 240, 232';
     const rgbCool = light ? '72, 72, 68' : '206, 212, 222';
-    const intensity = light ? 0.45 : 0.64;
+    const baseIntensity = (light ? 0.45 : 0.64) * fieldVis;
+    const intensity = baseIntensity * (1 + easeB * 0.36);
 
     const p = state.scrollShown;
-    /* Subtle choreography across sections as the user scrolls */
-    const centerX = state.cx + state.wakeX * 28 - Math.sin(p * Math.PI) * (state.w >= 1024 ? 54 : 20);
-    const centerY = state.cy + state.wakeY * 20 - p * 30;
-    const radiusScale = state.baseRadius * (1 + Math.sin(p * Math.PI * 0.9) * 0.14);
+    /* Resting portfolio choreography */
+    const portCenterX = state.cx + state.wakeX * 28 - Math.sin(p * Math.PI) * (state.w >= 1024 ? 54 : 20);
+    const portCenterY = state.cy + state.wakeY * 20 - p * 30;
+    const portRadius = state.baseRadius * (1 + Math.sin(p * Math.PI * 0.9) * 0.14);
+    const portTilt = 0.25 + Math.sin(p * Math.PI * 0.85) * 0.22 + state.wakeY * 0.15;
+    const portRoll = -0.25 + p * 0.46 + state.wakeX * 0.12;
 
-    const tilt = 0.25 + Math.sin(p * Math.PI * 0.85) * 0.22 + state.wakeY * 0.15;
-    const roll = -0.25 + p * 0.46 + state.wakeX * 0.12;
+    /* Intro 4-act choreography: birth/bloom -> relativistic orbit -> collapse into photon ring -> handoff */
+    const bloomPhase = Math.min(1, introP / 0.36);
+    const collapsePhase = Math.min(1, Math.max(0, (introP - 0.76) / 0.22));
+    const introBaseR = Math.min(state.w, state.h) * (state.w >= 1024 ? 0.285 : 0.33);
+    const introRadius = introBaseR * (0.48 + Math.sin(Math.min(1, introP / 0.78) * Math.PI * 0.5) * 0.72 - collapsePhase * 0.18);
+    const introCenterX = state.w * 0.5 + state.wakeX * 18;
+    const introCenterY = state.h * 0.5 + state.wakeY * 14 + introP * 10;
+    const introTilt = 0.08 + bloomPhase * 0.26 - collapsePhase * 0.14 + state.wakeY * 0.12;
+    const introRoll = -0.14 + introP * 0.52 + state.wakeX * 0.10;
+
+    const centerX = portCenterX + (introCenterX - portCenterX) * easeB;
+    const centerY = portCenterY + (introCenterY - portCenterY) * easeB;
+    const radiusScale = portRadius + (introRadius - portRadius) * easeB;
+    const tilt = portTilt + (introTilt - portTilt) * easeB;
+    const roll = portRoll + (introRoll - portRoll) * easeB;
+
+    const introDiscSpread = 0.30 + bloomPhase * 0.86 - collapsePhase * 0.62;
+    const discSpread = 1 + (introDiscSpread - 1) * easeB;
+    const discFade = 1 - easeB * collapsePhase * 0.72;
+    const ringBoost = 1 + easeB * (0.25 + collapsePhase * 0.65);
+
     const cosRoll = Math.cos(roll);
     const sinRoll = Math.sin(roll);
-    const spinBoost = p * 2.8;
-    const streakBoost = 1 + state.scrollVel * 2.4;
+    const spinBoost = p * 2.8 + easeB * introP * 7.2;
+    const streakBoost = 1 + state.scrollVel * 2.4 + easeB * Math.min(2.6, Math.abs(daoIntroState.vel) * 3.8);
 
     const projectDisc = (r, angle, yOff) => {
-      const x3 = Math.cos(angle) * r;
-      const z3 = Math.sin(angle) * r;
+      const scaledR = r * discSpread;
+      const x3 = Math.cos(angle) * scaledR;
+      const z3 = Math.sin(angle) * scaledR;
       const px = x3;
-      const py = yOff + z3 * tilt;
+      const py = yOff * discSpread + z3 * tilt;
       return {
         x: (px * cosRoll - py * sinRoll) * radiusScale + centerX,
         y: (px * sinRoll + py * cosRoll) * radiusScale + centerY,
@@ -532,7 +815,7 @@ const initDaoField = () => {
 
       const [fx, fy] = applyWake(proj.x, proj.y);
       const doppler = 0.78 + 0.34 * Math.sin(a);
-      const alpha = Math.min(0.85, pt.alpha * doppler * 0.68 * intensity);
+      const alpha = Math.min(0.85, pt.alpha * doppler * 0.68 * intensity * discFade);
       const rgb = pt.warmth > 0.35 ? rgbWarm : rgbCool;
 
       ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
@@ -587,7 +870,7 @@ const initDaoField = () => {
       const pMid = projectDisc(s.r, (a0 + a1) * 0.5, s.yOffset);
       const p1 = projectDisc(s.r, a1, s.yOffset);
 
-      const alpha = Math.min(0.65, s.alpha * (p0.z > 0 ? 1 : 0.52) * intensity * (0.9 + state.scrollVel * 0.35));
+      const alpha = Math.min(0.65, s.alpha * (p0.z > 0 ? 1 : 0.52) * intensity * discFade * (0.9 + state.scrollVel * 0.35));
       ctx.strokeStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
       ctx.lineWidth = s.width;
       ctx.beginPath();
@@ -604,7 +887,7 @@ const initDaoField = () => {
       const ry = Math.sin(a) * pt.r * radiusScale + centerY;
       const [fx, fy] = applyWake(rx, ry);
 
-      const alpha = Math.min(0.88, pt.alpha * intensity);
+      const alpha = Math.min(0.95, pt.alpha * intensity * ringBoost);
       ctx.fillStyle = `rgba(${rgbWarm}, ${alpha.toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(fx, fy, pt.size, 0, Math.PI * 2);
@@ -620,7 +903,7 @@ const initDaoField = () => {
 
       const [fx, fy] = applyWake(proj.x, proj.y);
       const doppler = 0.84 + 0.36 * Math.sin(a);
-      const alpha = Math.min(0.94, pt.alpha * doppler * intensity);
+      const alpha = Math.min(0.94, pt.alpha * doppler * intensity * discFade);
       const rgb = pt.warmth > 0.3 ? rgbWarm : rgbCool;
 
       ctx.fillStyle = `rgba(${rgb}, ${alpha.toFixed(3)})`;
@@ -772,7 +1055,8 @@ const initDaoCursor = () => {
   };
 
   const updateScrollCapsule = () => {
-    const nearTop = window.scrollY < Math.max(120, window.innerHeight * 0.35);
+    const inIntro = document.documentElement.classList.contains('intro-active');
+    const nearTop = inIntro || window.scrollY < Math.max(120, window.innerHeight * 0.35);
     document.body.classList.toggle('dao-cursor-scroll', nearTop && !document.body.classList.contains('dao-cursor-on'));
     updatePhotoLight();
   };
@@ -876,6 +1160,7 @@ const initDaoCursor = () => {
   }, { passive: true });
 
   window.addEventListener('scroll', updateScrollCapsule, { passive: true });
+  window.addEventListener('portfolio:introcomplete', updateScrollCapsule);
   document.addEventListener('mouseleave', deactivate);
   window.addEventListener('blur', deactivate);
   window.addEventListener('portfolio:dialogchange', (event) => {
@@ -1355,6 +1640,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initThemeToggle();
   initMotionToggle();
+  initDaoIntro();
   initDaoField();
   initDaoCursor();
   initScrollSpy();

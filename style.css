@@ -2079,3 +2079,296 @@ textarea {
     }
   }
 }
+
+/* ==========================================================================
+   21. DAO-Style Scroll-Scrubbed Intro Sequence
+   ========================================================================== */
+.dao-intro {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Lock viewport to the pure void while the intro sequence is active */
+  html.intro-active,
+  html.intro-active body {
+    overflow: hidden;
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  html.intro-active body {
+    background-color: #000000;
+    background-image: none;
+  }
+
+  html.intro-active[data-theme="light"] body {
+    background-color: var(--color-bg);
+  }
+
+  /* Hold portfolio hidden until the intro hands off; compositor-only fade */
+  .layout,
+  .scroll-progress {
+    transition: opacity 720ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  html.intro-active .layout,
+  html.intro-active .scroll-progress {
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Pause hero entrance animations until the portfolio is revealed */
+  html.intro-active .hero > *,
+  html.intro-active .hero__name .word__inner {
+    animation-play-state: paused;
+  }
+
+  .js .dao-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 260;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 640ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 640ms linear;
+  }
+
+  html.intro-active .dao-intro {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    touch-action: none;
+  }
+
+  .dao-intro.is-done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* Subtle left vertical edge rail (DAO siderail motif) */
+  .dao-intro__rail {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: clamp(22px, 2.4vw, 36px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .dao-intro__rail span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--font-mono);
+    font-size: clamp(9px, 0.72vw, 11px);
+    letter-spacing: 0.42em;
+    color: var(--color-text-muted);
+    opacity: 0.36;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .dao-intro__rail {
+      display: none;
+    }
+  }
+
+  /* Quiet skip control in the top-right corner */
+  .dao-intro__skip {
+    position: fixed;
+    top: clamp(18px, 2.6vh, 30px);
+    right: clamp(20px, 3vw, 42px);
+    z-index: 2;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-base);
+  }
+
+  .dao-intro__skip:hover,
+  .dao-intro__skip:focus-visible {
+    color: var(--color-text);
+    border-color: var(--color-text);
+  }
+
+  /* Centered monogram mark sitting directly over the Event Horizon core */
+  .dao-intro__center {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 var(--space-md);
+    pointer-events: none;
+    will-change: opacity, transform;
+  }
+
+  .dao-intro__eyebrow {
+    font-family: var(--font-mono);
+    font-size: clamp(10px, 0.85vw, 12px);
+    letter-spacing: 0.56em;
+    text-indent: 0.56em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: clamp(14px, 2.2vh, 26px);
+  }
+
+  .dao-intro__mark {
+    width: clamp(180px, 28vw, 380px);
+    color: var(--color-text);
+    line-height: 0;
+    filter: drop-shadow(0 0 28px rgba(0, 0, 0, 0.55));
+  }
+
+  :root[data-theme="light"] .dao-intro__mark {
+    filter: none;
+  }
+
+  .dao-intro__mark svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .dao-intro__name {
+    margin-top: clamp(14px, 2.2vh, 26px);
+    font-family: var(--font-mono);
+    font-size: clamp(11px, 0.95vw, 13px);
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* Bottom-left DAO-style numeric index & scroll progress hairline */
+  .dao-intro__index {
+    position: fixed;
+    left: clamp(22px, 3vw, 42px);
+    bottom: clamp(24px, 4vh, 42px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+  }
+
+  .dao-intro__track {
+    display: block;
+    width: clamp(46px, 4.4vw, 68px);
+    height: 1px;
+    background-color: var(--color-border);
+    overflow: hidden;
+  }
+
+  .dao-intro__track-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-text);
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
+  }
+
+  .dao-intro__digits {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dao-intro__digits b {
+    font-size: clamp(24px, 4.2vh, 42px);
+    font-weight: 700;
+    line-height: 0.95;
+    color: var(--color-text);
+  }
+
+  .dao-intro__digits i {
+    font-style: normal;
+    font-size: clamp(11px, 1.4vh, 14px);
+    color: var(--color-text-muted);
+  }
+
+  /* Bottom-center scroll capsule cue (fades out once scrolling begins) */
+  .dao-intro__cue {
+    position: fixed;
+    left: 50%;
+    bottom: clamp(26px, 4.2vh, 44px);
+    translate: -50% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 420ms ease;
+  }
+
+  .dao-intro__cue.is-hidden {
+    opacity: 0;
+  }
+
+  .dao-intro__capsule {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 34px;
+    border: 1.5px solid var(--color-text);
+    border-radius: 999px;
+    opacity: 0.8;
+  }
+
+  .dao-intro__capsule i {
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    translate: -50% 0;
+    animation: dao-scroll-fall 2.1s cubic-bezier(0.5, 0.05, 0.5, 1) infinite;
+  }
+
+  .dao-intro__cue-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dao-intro {
+    display: none !important;
+  }
+
+  .layout,
+  .scroll-progress {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+:root[data-motion="paused"] .dao-intro {
+  display: none !important;
+}
