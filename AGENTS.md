@@ -1,9 +1,9 @@
 # Agent Instructions: Static Website Project
 ## 1. Project Overview
-- **Project Name:** [e.g., Nexus Esports Club / Juan Dela Cruz Portfolio / Kape Point Cafe]
-- **Category:** [Personal Portfolio | Local Business | Student Organization]
-- **Description:** [Brief 1-2 sentence overview of the subject and target audience]
-- **Primary Goal:** [e.g., Showcase portfolio pieces / Drive customer inquiries / Recruit new members]
+- **Project Name:**  Bench Ivan A. Canzana Portfolio 
+- **Category:** Personal Portfolio 
+- **Description:** A personal portfolio for Ivan A. Canzana, a graduating student and aspiring AI Engineer who builds practical AI-powered applications. Built for employers and recruiters looking for a motivated, fast-learning junior developer.
+- **Primary Goal:** Showcase AI and development projects and attract entry-level job and internship opportunities 
 ## 2. Technical Stack & Constraints
 - **Core Stack:** Plain HTML5, CSS3, Vanilla JavaScript (ES6+).
 - **Zero External Dependencies:** Do NOT use external build tools, package managers (npm/yarn), or thirdparty CSS/JS frameworks (no Tailwind CDN, Bootstrap, React, or jQuery).
@@ -22,10 +22,10 @@ my-website/
  └── [List key files placed here, e.g., logo.png, hero.jpg]
 ## 4. UI/UX & Design Guidelines
  Color Palette:
- Primary: [e.g., #1E293B / Slate Navy]
+ Primary: #040D12 
  Accent / CTA: [e.g., #3B82F6 / Vibrant Blue]
- Background: [e.g., #F8FAFC / Off-white or #0F172A / Dark]
- Text: [e.g., #0F172A / High-contrast dark neutral]
+ Background: #183D3D or #5C8374
+ Text: #93B1A6
  Typography: Clean, accessible sans-serif or serif system stack (e.g., system-ui, -apple-system, sans-serif).
  Layout Approach: Mobile-first design using CSS Flexbox and CSS Grid.
  Responsiveness: Fluid breakpoints (Mobile: < 640px, Tablet: 640px - 1024px, Desktop: > 1024px).
